@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -u
+
+ROOT="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/.." && pwd)"
+QS_PATH="$ROOT/quickshell"
+status=0
+
+if command -v hyprctl >/dev/null 2>&1; then
+    if ! hyprctl reload; then
+        echo "Warning: Hyprland reload failed." >&2
+        status=1
+    fi
+else
+    echo "Warning: hyprctl not found; skipped Hyprland reload." >&2
+    status=1
+fi
+
+if command -v quickshell >/dev/null 2>&1; then
+    quickshell kill -p "$QS_PATH" >/dev/null 2>&1 || true
+    nohup quickshell -p "$QS_PATH" >/tmp/zen0x-quickshell.log 2>&1 &
+else
+    echo "Warning: quickshell not found; skipped Quickshell reload." >&2
+    status=1
+fi
+
+if command -v pkill >/dev/null 2>&1; then
+    if ! pkill -SIGUSR1 kitty; then
+        echo "Warning: Kitty reload failed." >&2
+        status=1
+    fi
+else
+    echo "Warning: pkill not found; skipped Kitty reload." >&2
+    status=1
+fi
+
+if [ "$status" -eq 0 ]; then
+    echo "Reloaded Hyprland, Quickshell, and Kitty."
+else
+    echo "Theme files generated, but one or more reload steps failed." >&2
+fi
+
+exit "$status"
