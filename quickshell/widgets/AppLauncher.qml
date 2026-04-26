@@ -124,11 +124,14 @@ PanelWindow {
                     required property var modelData
 
                     property string iconSource: modelData.icon ? Quickshell.iconPath(modelData.icon, true) : ""
+                    readonly property bool active: ListView.isCurrentItem
+                    readonly property bool highlighted: active || containsMouse
 
                     width: appList.width
                     height: 54
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
+                    onEntered: appList.currentIndex = index
                     onClicked: launch()
 
                     function launch() {
@@ -139,7 +142,9 @@ PanelWindow {
                     Rectangle {
                         anchors.fill: parent
                         radius: 8
-                        color: row.containsMouse || ListView.isCurrentItem ? colors.panelAlt : "transparent"
+                        color: row.active ? Qt.alpha(colors.accent, 0.28) : row.containsMouse ? Qt.alpha(colors.accent, 0.16) : "transparent"
+                        border.width: row.highlighted ? 1 : 0
+                        border.color: row.active ? Qt.alpha(colors.accent, 0.6) : row.containsMouse ? Qt.alpha(colors.accent, 0.35) : "transparent"
 
                         RowLayout {
                             anchors.fill: parent
@@ -151,7 +156,9 @@ PanelWindow {
                                 Layout.preferredWidth: 28
                                 Layout.preferredHeight: 28
                                 radius: 7
-                                color: row.iconSource.length > 0 ? "transparent" : colors.accent
+                                color: row.iconSource.length > 0 ? (row.highlighted ? Qt.alpha(colors.accent, 0.18) : "transparent") : colors.accent
+                                border.width: row.iconSource.length > 0 && row.highlighted ? 1 : 0
+                                border.color: row.iconSource.length > 0 && row.highlighted ? Qt.alpha(colors.accent, 0.4) : "transparent"
 
                                 IconImage {
                                     anchors.centerIn: parent
@@ -178,7 +185,7 @@ PanelWindow {
 
                                 Text {
                                     Layout.fillWidth: true
-                                    color: colors.fg
+                                    color: row.active ? colors.accent : colors.fg
                                     elide: Text.ElideRight
                                     font.pixelSize: 14
                                     font.weight: Font.DemiBold
@@ -187,7 +194,7 @@ PanelWindow {
 
                                 Text {
                                     Layout.fillWidth: true
-                                    color: colors.muted
+                                    color: row.highlighted ? Qt.alpha(colors.fg, 0.82) : colors.muted
                                     elide: Text.ElideRight
                                     font.pixelSize: 11
                                     text: row.modelData.comment || row.modelData.genericName || row.modelData.id

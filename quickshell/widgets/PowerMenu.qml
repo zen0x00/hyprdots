@@ -29,6 +29,18 @@ PanelWindow {
         bottom: Math.max(20, Math.round((menu.screen.height - menu.implicitHeight) / 2))
     }
 
+    onVisibleChanged: {
+        if (visible)
+            menu.forceActiveFocus();
+    }
+
+    Keys.onPressed: event => {
+        if (event.key === Qt.Key_Escape) {
+            menu.dismissed();
+            event.accepted = true;
+        }
+    }
+
     Rectangle {
         anchors.fill: parent
         radius: 8

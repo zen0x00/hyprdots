@@ -8,34 +8,20 @@ PanelWindow {
 
     property int topOffset: 46
     property var colors
-    property int activeSection: 0
-    property int activeTheme: 1
-    property int activeFont: 0
-    property int activeWallpaper: 0
-    readonly property var sections: ["Themes", "Fonts", "Wallpapers"]
+    property string activeThemeSlug: "catppuccin"
+    readonly property int menuWidth: 420
+    readonly property int menuHeight: 500
     readonly property var themes: [
+        { "name": "Abyssal", "slug": "abyssal", "swatches": ["#061115", "#448fff", "#8bd5ca"] },
         { "name": "Black", "slug": "black", "swatches": ["#0d0d0d", "#ffffff", "#8d8d8d"] },
         { "name": "Catppuccin", "slug": "catppuccin", "swatches": ["#1e1e2e", "#89b4fa", "#f5c2e7"] },
-        { "name": "Latte", "slug": "catppuccin-latte", "swatches": ["#f5f6fa", "#1e66f5", "#d20f39"] },
-        { "name": "Abyssal", "slug": "abyssal", "swatches": ["#061115", "#448fff", "#8bd5ca"] },
         { "name": "Dracula", "slug": "dracula", "swatches": ["#282a36", "#bd93f9", "#ff79c6"] },
         { "name": "E-Ink", "slug": "e-ink", "swatches": ["#ffffff", "#000000", "#6e6e6e"] },
         { "name": "Everforest", "slug": "everforest", "swatches": ["#2b3339", "#7fbbb3", "#a7c080"] },
         { "name": "Gruvbox", "slug": "gruvbox", "swatches": ["#282828", "#fabd2f", "#83a598"] },
+        { "name": "Latte", "slug": "catppuccin-latte", "swatches": ["#f5f6fa", "#1e66f5", "#d20f39"] },
         { "name": "Nord", "slug": "nord", "swatches": ["#2e3440", "#88c0d0", "#a3be8c"] },
         { "name": "Tokyo Night", "slug": "tokyonight", "swatches": ["#1a1b26", "#7aa2f7", "#bb9af7"] }
-    ]
-    readonly property var fonts: [
-        { "name": "Inter", "role": "Interface" },
-        { "name": "JetBrains Mono", "role": "Terminal" },
-        { "name": "Symbols Nerd Font Mono", "role": "Icons" },
-        { "name": "SF Pro Display", "role": "Display" }
-    ]
-    readonly property var wallpapers: [
-        { "name": "Current", "tone": "System", "swatches": ["#14171d", "#252b35"] },
-        { "name": "Dawn", "tone": "Light", "swatches": ["#f5f6fa", "#df8e1d"] },
-        { "name": "Forest", "tone": "Dark", "swatches": ["#2b3339", "#a7c080"] },
-        { "name": "Night", "tone": "Dark", "swatches": ["#1a1b26", "#7aa2f7"] }
     ]
 
     signal dismissed()
@@ -44,138 +30,121 @@ PanelWindow {
     focusable: true
     aboveWindows: true
     exclusiveZone: 0
-    implicitWidth: 390
-    implicitHeight: 520
+    implicitWidth: menuWidth
+    implicitHeight: menuHeight
     anchors {
         top: true
+        bottom: true
+        left: true
         right: true
     }
     margins {
-        top: menu.topOffset
-        right: 12
+        left: Math.max(16, Math.round((menu.screen.width - menu.menuWidth) / 2))
+        right: Math.max(16, Math.round((menu.screen.width - menu.menuWidth) / 2))
+        top: Math.max(16, Math.round((menu.screen.height - menu.menuHeight) / 2))
+        bottom: Math.max(16, Math.round((menu.screen.height - menu.menuHeight) / 2))
+    }
+
+    onVisibleChanged: {
+        if (visible) {
+            themeList.currentIndex = activeThemeIndex();
+            keyboardScope.forceActiveFocus();
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.LeftButton
+        onClicked: menu.dismissed()
     }
 
     Rectangle {
+        id: panel
         anchors.fill: parent
         radius: 8
         color: colors.bg
         border.width: 1
         border.color: colors.panelAlt
 
-        ColumnLayout {
+        MouseArea {
             anchors.fill: parent
-            anchors.margins: 14
-            spacing: 12
+            acceptedButtons: Qt.LeftButton
+        }
 
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 8
+        FocusScope {
+            id: keyboardScope
+            anchors.fill: parent
+            focus: menu.visible
 
-                Repeater {
-                    model: menu.sections
-
-                    MouseArea {
-                        id: tab
-
-                        required property string modelData
-                        required property int index
-
-                        Layout.fillWidth: true
-                        Layout.preferredHeight: 34
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: menu.activeSection = index
-
-                        Rectangle {
-                            anchors.fill: parent
-                            radius: 8
-                            color: menu.activeSection === tab.index ? colors.accent : tab.containsMouse ? colors.panelAlt : colors.panel
-
-                            Text {
-                                anchors.centerIn: parent
-                                color: menu.activeSection === tab.index ? "#071015" : colors.fg
-                                font.pixelSize: 12
-                                font.weight: Font.DemiBold
-                                text: tab.modelData
-                            }
-                        }
-                    }
-                }
+            Keys.onEscapePressed: event => {
+                menu.dismissed();
+                event.accepted = true;
+            }
+            Keys.onUpPressed: event => {
+                menu.selectRelative(-1);
+                event.accepted = true;
+            }
+            Keys.onDownPressed: event => {
+                menu.selectRelative(1);
+                event.accepted = true;
+            }
+            Keys.onReturnPressed: event => {
+                menu.activateCurrentTheme();
+                event.accepted = true;
+            }
+            Keys.onEnterPressed: event => {
+                menu.activateCurrentTheme();
+                event.accepted = true;
             }
 
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 68
-                radius: 8
-                color: colors.panel
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 12
+                spacing: 10
 
-                RowLayout {
-                    anchors.fill: parent
-                    anchors.margins: 12
-                    spacing: 10
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 52
+                    radius: 8
+                    color: colors.panel
 
-                    Rectangle {
-                        Layout.preferredWidth: 42
-                        Layout.preferredHeight: 42
-                        radius: 8
-                        color: colors.bg
-
-                        Text {
-                            anchors.centerIn: parent
-                            color: colors.accent
-                            font.family: "Symbols Nerd Font Mono"
-                            font.pixelSize: 20
-                            text: menu.activeSection === 0 ? "󰏘" : menu.activeSection === 1 ? "󰛖" : "󰸉"
-                        }
-                    }
-
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-
-                        Text {
-                            Layout.fillWidth: true
-                            color: colors.fg
-                            elide: Text.ElideRight
-                            font.pixelSize: 15
-                            font.weight: Font.Bold
-                            text: menu.sections[menu.activeSection]
-                        }
-
-                        Text {
-                            Layout.fillWidth: true
-                            color: colors.muted
-                            elide: Text.ElideRight
-                            font.pixelSize: 12
-                            text: menu.activeSection === 0 ? menu.themes[menu.activeTheme].name : menu.activeSection === 1 ? menu.fonts[menu.activeFont].name : menu.wallpapers[menu.activeWallpaper].name
-                        }
+                    Text {
+                        anchors.fill: parent
+                        anchors.leftMargin: 14
+                        anchors.rightMargin: 14
+                        verticalAlignment: Text.AlignVCenter
+                        color: colors.fg
+                        font.pixelSize: 15
+                        font.weight: Font.Bold
+                        text: "Themes"
                     }
                 }
-            }
 
-            ListView {
-                id: contentList
+                ListView {
+                    id: themeList
 
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-                spacing: 8
-                boundsBehavior: Flickable.StopAtBounds
-                model: menu.activeSection === 0 ? menu.themes : menu.activeSection === 1 ? menu.fonts : menu.wallpapers
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    clip: true
+                    spacing: 4
+                    model: menu.themes
+                    currentIndex: menu.activeThemeIndex()
+                    boundsBehavior: Flickable.StopAtBounds
+                    interactive: true
 
-                delegate: ThemeRow {
-                    width: contentList.width
-                    itemData: modelData
-                    selected: menu.activeSection === 0 ? index === menu.activeTheme : menu.activeSection === 1 ? index === menu.activeFont : index === menu.activeWallpaper
-                    section: menu.activeSection
-                    colors: menu.colors
-                    onPicked: {
-                        if (menu.activeSection === 0) {
-                            menu.activeTheme = index;
+                    delegate: ThemeRow {
+                        required property var modelData
+
+                        width: themeList.width
+                        itemData: modelData
+                        selected: modelData.slug === menu.activeThemeSlug
+                        active: ListView.isCurrentItem
+                        colors: menu.colors
+                        onEntered: themeList.currentIndex = index
+                        onPicked: {
+                            menu.activeThemeSlug = modelData.slug;
+                            themeList.currentIndex = index;
                             menu.applyTheme(modelData.slug);
-                        } else if (menu.activeSection === 1) {
-                            menu.activeFont = index;
-                        } else {
-                            menu.activeWallpaper = index;
                         }
                     }
                 }
@@ -185,6 +154,33 @@ PanelWindow {
 
     Process {
         id: themeRunner
+    }
+
+    function activeThemeIndex() {
+        for (let i = 0; i < themes.length; i++) {
+            if (themes[i].slug === activeThemeSlug)
+                return i;
+        }
+
+        return 0;
+    }
+
+    function activateCurrentTheme() {
+        if (themeList.currentItem)
+            themeList.currentItem.pick();
+    }
+
+    function selectRelative(step) {
+        if (themes.length === 0) {
+            themeList.currentIndex = -1;
+            return;
+        }
+
+        if (themeList.currentIndex < 0)
+            themeList.currentIndex = activeThemeIndex();
+
+        themeList.currentIndex = (themeList.currentIndex + step + themes.length) % themes.length;
+        themeList.positionViewAtIndex(themeList.currentIndex, ListView.Contain);
     }
 
     function applyTheme(slug) {
@@ -203,82 +199,48 @@ PanelWindow {
 
         property var itemData
         property bool selected: false
-        property int section: 0
+        property bool active: false
         property var colors
 
         signal picked()
 
+        width: parent ? parent.width : 0
         height: 58
+        hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        onClicked: picked()
+        onClicked: pick()
+
+        function pick() {
+            picked();
+        }
 
         Rectangle {
             anchors.fill: parent
             radius: 8
-            color: row.selected ? row.colors.panelAlt : row.containsMouse ? row.colors.panelAlt : row.colors.panel
-            border.width: 1
-            border.color: row.selected ? row.colors.accent : "transparent"
+            color: row.active ? Qt.alpha(colors.accent, 0.28) : row.containsMouse ? Qt.alpha(colors.accent, 0.16) : "transparent"
+            border.width: row.active || row.containsMouse ? 1 : 0
+            border.color: row.active ? Qt.alpha(colors.accent, 0.6) : Qt.alpha(colors.accent, 0.35)
 
             RowLayout {
                 anchors.fill: parent
-                anchors.leftMargin: 12
-                anchors.rightMargin: 12
-                spacing: 10
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                spacing: 8
 
-                Row {
-                    Layout.preferredWidth: row.section === 1 ? 38 : 58
-                    Layout.preferredHeight: 28
-                    spacing: -8
-
-                    Repeater {
-                        model: row.section === 1 ? [row.colors.accent] : row.itemData.swatches
-
-                        Rectangle {
-                            width: 28
-                            height: 28
-                            radius: 8
-                            color: modelData
-                            border.width: 1
-                            border.color: row.colors.bg
-
-                            Text {
-                                anchors.centerIn: parent
-                                visible: row.section === 1
-                                color: "#071015"
-                                font.pixelSize: 13
-                                font.weight: Font.Bold
-                                text: "Aa"
-                            }
-                        }
-                    }
-                }
-
-                ColumnLayout {
+                Text {
                     Layout.fillWidth: true
-                    spacing: 2
-
-                    Text {
-                        Layout.fillWidth: true
-                        color: row.colors.fg
-                        elide: Text.ElideRight
-                        font.pixelSize: 13
-                        font.weight: Font.DemiBold
-                        text: row.itemData.name
-                    }
-
-                    Text {
-                        Layout.fillWidth: true
-                        color: row.colors.muted
-                        elide: Text.ElideRight
-                        font.pixelSize: 11
-                        text: row.section === 0 ? row.itemData.slug : row.section === 1 ? row.itemData.role : row.itemData.tone
-                    }
+                    color: row.active ? colors.accent : colors.fg
+                    elide: Text.ElideRight
+                    font.pixelSize: 14
+                    font.weight: Font.DemiBold
+                    text: row.itemData.name
+                    verticalAlignment: Text.AlignVCenter
                 }
 
                 Text {
                     Layout.preferredWidth: 20
                     horizontalAlignment: Text.AlignRight
-                    color: row.selected ? row.colors.accent : row.colors.muted
+                    color: row.selected ? colors.accent : colors.muted
                     font.family: "Symbols Nerd Font Mono"
                     font.pixelSize: 15
                     text: row.selected ? "󰄬" : "󰅂"

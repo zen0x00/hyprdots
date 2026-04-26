@@ -27,6 +27,10 @@ Item {
         running: true
         repeat: true
         triggeredOnStart: true
-        onTriggered: process.exec(poller.command)
+        onTriggered: poller.refresh()
+    }
+
+    function refresh() {
+        process.exec(poller.command);
     }
 }
