@@ -28,7 +28,7 @@ Item {
 
     function workspaceTextColor(active, occupied) {
         if (active)
-            return tokens.workspaceActiveText;
+            return tokens.textAccent;
         if (occupied)
             return tokens.workspaceBusyText;
         return tokens.workspaceIdleText;
@@ -98,9 +98,16 @@ Item {
                 Text {
                     anchors.centerIn: parent
                     color: workspaces.workspaceTextColor(workspaceButton.active, workspaceButton.occupied)
-                    font.pixelSize: tokens.textFontSize + 1
+                    font.pixelSize: tokens.textFontSize + (workspaceButton.active ? 3 : 1)
                     font.weight: Font.DemiBold
                     text: String(workspaceButton.workspaceId)
+
+                    Behavior on font.pixelSize {
+                        NumberAnimation {
+                            duration: 160
+                            easing.type: Easing.OutCubic
+                        }
+                    }
                 }
 
                 Behavior on scale {

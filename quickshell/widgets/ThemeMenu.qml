@@ -12,16 +12,16 @@ PanelWindow {
     readonly property int menuWidth: 420
     readonly property int menuHeight: 500
     readonly property var themes: [
-        { "name": "Abyssal", "slug": "abyssal", "swatches": ["#061115", "#448fff", "#8bd5ca"] },
-        { "name": "Black", "slug": "black", "swatches": ["#0d0d0d", "#ffffff", "#8d8d8d"] },
-        { "name": "Catppuccin", "slug": "catppuccin", "swatches": ["#1e1e2e", "#89b4fa", "#f5c2e7"] },
-        { "name": "Dracula", "slug": "dracula", "swatches": ["#282a36", "#bd93f9", "#ff79c6"] },
-        { "name": "E-Ink", "slug": "e-ink", "swatches": ["#ffffff", "#000000", "#6e6e6e"] },
-        { "name": "Everforest", "slug": "everforest", "swatches": ["#2b3339", "#7fbbb3", "#a7c080"] },
-        { "name": "Gruvbox", "slug": "gruvbox", "swatches": ["#282828", "#fabd2f", "#83a598"] },
-        { "name": "Latte", "slug": "catppuccin-latte", "swatches": ["#f5f6fa", "#1e66f5", "#d20f39"] },
-        { "name": "Nord", "slug": "nord", "swatches": ["#2e3440", "#88c0d0", "#a3be8c"] },
-        { "name": "Tokyo Night", "slug": "tokyonight", "swatches": ["#1a1b26", "#7aa2f7", "#bb9af7"] }
+        { "name": "Abyssal", "slug": "abyssal", "bg": "#061115", "accent": "#448fff" },
+        { "name": "Black", "slug": "black", "bg": "#0d0d0d", "accent": "#8d8d8d" },
+        { "name": "Catppuccin", "slug": "catppuccin", "bg": "#1e1e2e", "accent": "#89b4fa" },
+        { "name": "Dracula", "slug": "dracula", "bg": "#282a36", "accent": "#bd93f9" },
+        { "name": "E-Ink", "slug": "e-ink", "bg": "#000000", "accent": "#6e6e6e" },
+        { "name": "Everforest", "slug": "everforest", "bg": "#2b3339", "accent": "#7fbbb3" },
+        { "name": "Gruvbox", "slug": "gruvbox", "bg": "#1d2021", "accent": "#83a598" },
+        { "name": "Latte", "slug": "catppuccin-latte", "bg": "#f5f6fa", "accent": "#1e66f5" },
+        { "name": "Nord", "slug": "nord", "bg": "#2e3440", "accent": "#88c0d0" },
+        { "name": "Tokyo Night", "slug": "tokyonight", "bg": "#16161e", "accent": "#7aa2f7" }
     ]
 
     signal dismissed()
@@ -47,6 +47,7 @@ PanelWindow {
 
     onVisibleChanged: {
         if (visible) {
+            activeThemeSlug = detectedThemeSlug();
             themeList.currentIndex = activeThemeIndex();
             keyboardScope.forceActiveFocus();
         }
@@ -136,14 +137,15 @@ PanelWindow {
                         required property var modelData
 
                         width: themeList.width
+                        itemIndex: index
                         itemData: modelData
                         selected: modelData.slug === menu.activeThemeSlug
                         active: ListView.isCurrentItem
                         colors: menu.colors
-                        onEntered: themeList.currentIndex = index
+                        onEntered: themeList.currentIndex = itemIndex
                         onPicked: {
                             menu.activeThemeSlug = modelData.slug;
-                            themeList.currentIndex = index;
+                            themeList.currentIndex = itemIndex;
                             menu.applyTheme(modelData.slug);
                         }
                     }
@@ -163,6 +165,25 @@ PanelWindow {
         }
 
         return 0;
+    }
+
+    function normalizeColor(value) {
+        const color = String(value || "").trim().toLowerCase();
+        if (color.length === 9 && color.indexOf("#ff") === 0)
+            return "#" + color.slice(3);
+        return color;
+    }
+
+    function detectedThemeSlug() {
+        const currentBg = normalizeColor(colors.bg);
+        const currentAccent = normalizeColor(colors.accent);
+
+        for (let i = 0; i < themes.length; i++) {
+            if (themes[i].bg === currentBg && themes[i].accent === currentAccent)
+                return themes[i].slug;
+        }
+
+        return activeThemeSlug;
     }
 
     function activateCurrentTheme() {
@@ -186,10 +207,8 @@ PanelWindow {
     function applyTheme(slug) {
         themeRunner.exec([
             "sh",
-            "-c",
-            "(if command -v zen0x-apply-theme >/dev/null 2>&1; then zen0x-apply-theme \"$1\"; else /home/aman/dotfiles/bin/zen0x-apply-theme \"$1\"; fi) >/tmp/zen0x-apply-theme.log 2>&1 &",
-            "zen0x-apply-theme",
-            slug
+            "-lc",
+            "nohup /home/aman/dotfiles/bin/zen0x-apply-theme " + slug + " >/tmp/zen0x-apply-theme.log 2>&1 </dev/null &"
         ]);
         menu.dismissed();
     }
@@ -198,6 +217,7 @@ PanelWindow {
         id: row
 
         property var itemData
+        property int itemIndex: -1
         property bool selected: false
         property bool active: false
         property var colors
