@@ -1,15 +1,48 @@
 import QtQuick
-import QtQuick.Layouts
 import Quickshell.Hyprland
 
-RowLayout {
+Item {
     id: workspaces
 
-    property var colors
+    property var tokens
     property int focusedId: Hyprland.focusedWorkspace ? Hyprland.focusedWorkspace.id : 0
     property int refreshKey: 0
+    readonly property var workspaceIds: [1, 2, 3, 4, 5]
+    readonly property int indicatorHeight: 3
+    readonly property int indicatorWidth: Math.max(10, tokens.moduleHeight - 10)
 
-    spacing: 6
+    implicitWidth: workspaceRow.width
+    implicitHeight: workspaceRow.height
+
+    function workspaceBackground(active, hovered) {
+        if (hovered)
+            return tokens.workspaceHoverFill;
+        return tokens.clear;
+    }
+
+    function workspaceBorder(urgent, active, hovered) {
+        if (urgent)
+            return tokens.workspaceUrgent;
+        return tokens.clear;
+    }
+
+    function workspaceTextColor(active, occupied) {
+        if (active)
+            return tokens.workspaceActiveText;
+        if (occupied)
+            return tokens.workspaceBusyText;
+        return tokens.workspaceIdleText;
+    }
+
+    function activeIndicatorX() {
+        for (let i = 0; i < workspaceRepeater.count; i++) {
+            const button = workspaceRepeater.itemAt(i);
+            if (button && button.workspaceId === focusedId)
+                return button.x + ((button.width - indicatorWidth) / 2);
+        }
+
+        return ((tokens.moduleHeight - indicatorWidth) / 2);
+    }
 
     Connections {
         target: Hyprland.workspaces
@@ -18,49 +51,81 @@ RowLayout {
         }
     }
 
-    Repeater {
-        model: [1, 2, 3, 4, 5]
+    Rectangle {
+        id: activeIndicator
+        x: workspaces.activeIndicatorX()
+        y: workspaceRow.height - height
+        width: workspaces.indicatorWidth
+        height: workspaces.indicatorHeight
+        radius: 9999
+        z: 0
+        color: Qt.alpha(tokens.textAccent, 0.95)
 
-        MouseArea {
-            id: workspaceButton
+        Behavior on x {
+            NumberAnimation {
+                duration: 220
+                easing.type: Easing.OutCubic
+            }
+        }
+    }
 
-            readonly property int workspaceId: modelData
-            readonly property var workspace: workspaces.workspaceFor(workspaceId, workspaces.refreshKey)
-            readonly property bool active: workspaces.focusedId === workspaceId
-            readonly property bool occupied: workspace !== null
-            readonly property bool urgent: workspace !== null && workspace.urgent
+    Row {
+        id: workspaceRow
+        spacing: tokens.moduleGap
+        z: 1
 
-            Layout.preferredWidth: active ? 38 : 28
-            Layout.preferredHeight: 28
-            cursorShape: Qt.PointingHandCursor
-            onClicked: Hyprland.dispatch("workspace " + workspaceId)
+        Repeater {
+            id: workspaceRepeater
+            model: workspaces.workspaceIds
 
             Rectangle {
-                anchors.fill: parent
-                radius: 8
-                color: workspaceButton.active ? workspaces.colors.accent
-                    : workspaceButton.containsMouse ? workspaces.colors.panelAlt
-                    : "transparent"
-                border.width: 1
-                border.color: workspaceButton.urgent ? workspaces.colors.danger
-                    : workspaceButton.active ? workspaces.colors.accent
-                    : "transparent"
+                id: workspaceButton
+
+                readonly property int workspaceId: modelData
+                readonly property var workspace: workspaces.workspaceFor(workspaceId, workspaces.refreshKey)
+                readonly property bool active: workspaces.focusedId === workspaceId
+                readonly property bool occupied: workspace !== null
+                readonly property bool urgent: workspace !== null && workspace.urgent
+
+                width: tokens.moduleHeight
+                height: tokens.moduleHeight
+                radius: tokens.moduleRadius
+                color: workspaces.workspaceBackground(active, workspaceMouse.containsMouse)
+                border.width: urgent ? tokens.borderWidth : 0
+                border.color: workspaces.workspaceBorder(urgent, active, workspaceMouse.containsMouse)
+                scale: workspaceMouse.pressed ? tokens.pressedScale : workspaceMouse.containsMouse ? tokens.hoverScale : 1
 
                 Text {
                     anchors.centerIn: parent
-                    color: workspaceButton.active ? "#071015"
-                        : workspaceButton.occupied ? workspaces.colors.fg
-                        : workspaces.colors.muted
-                    font.pixelSize: 12
-                    font.weight: workspaceButton.active || workspaceButton.occupied ? Font.Bold : Font.Medium
-                    text: workspaceButton.workspaceId
+                    color: workspaces.workspaceTextColor(workspaceButton.active, workspaceButton.occupied)
+                    font.pixelSize: tokens.textFontSize + 1
+                    font.weight: Font.DemiBold
+                    text: String(workspaceButton.workspaceId)
                 }
-            }
 
-            Behavior on Layout.preferredWidth {
-                NumberAnimation {
-                    duration: 120
-                    easing.type: Easing.OutCubic
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: tokens.animationDuration
+                        easing.type: Easing.OutCubic
+                    }
+                }
+                Behavior on color {
+                    ColorAnimation {
+                        duration: tokens.animationDuration
+                    }
+                }
+                Behavior on border.color {
+                    ColorAnimation {
+                        duration: tokens.animationDuration
+                    }
+                }
+
+                MouseArea {
+                    id: workspaceMouse
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    hoverEnabled: true
+                    onClicked: Hyprland.dispatch("workspace " + workspaceButton.workspaceId)
                 }
             }
         }
