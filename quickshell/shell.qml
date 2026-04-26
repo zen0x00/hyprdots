@@ -1,7 +1,6 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
-import Quickshell.Services.Notifications
 import Quickshell.Wayland
 
 import "services"
@@ -18,6 +17,11 @@ ShellRoot {
     property string osdIcon: ""
     property string osdLabel: ""
     property real osdValue: 0
+    property string osdDetailText: ""
+    property string lastCapsLockState: ""
+    property string lastNumLockState: ""
+
+    Component.onCompleted: Qt.application.font.family = "JetBrainsMono Nerd Font Propo"
 
     readonly property color bg: "#1e1e2e"
     readonly property color panel: "#1e1e2e"
@@ -26,7 +30,7 @@ ShellRoot {
     readonly property color muted: "#6c7086"
     readonly property color accent: "#89b4fa"
     readonly property color danger: "#f38ba8"
-    readonly property int barHeight: 44
+    readonly property int barHeight: 58
 
     function toggleLauncher() {
         controlCenterVisible = false;
@@ -67,12 +71,32 @@ ShellRoot {
         themeMenuVisible = false;
     }
 
-    function showOsd(icon, label, value) {
+    function showOsd(icon, label, value, detailText) {
         osdIcon = icon;
         osdLabel = label;
         osdValue = Math.max(0, Math.min(1, Number(value)));
+        osdDetailText = detailText ? String(detailText) : "";
         osdVisible = true;
         osdHideTimer.restart();
+    }
+
+    function normalizeLockState(stateText) {
+        const state = String(stateText || "").trim().toLowerCase();
+        return state === "yes" || state === "on" || state === "1" ? "on" : "off";
+    }
+
+    function updateCapsLockState(stateText) {
+        const state = normalizeLockState(stateText);
+        if (lastCapsLockState.length > 0 && lastCapsLockState !== state)
+            showOsd("⇪", "Caps Lock", state === "on" ? 1 : 0, state === "on" ? "On" : "Off");
+        lastCapsLockState = state;
+    }
+
+    function updateNumLockState(stateText) {
+        const state = normalizeLockState(stateText);
+        if (lastNumLockState.length > 0 && lastNumLockState !== state)
+            showOsd("󰎠", "Num Lock", state === "on" ? 1 : 0, state === "on" ? "On" : "Off");
+        lastNumLockState = state;
     }
 
     SystemClock {
@@ -85,16 +109,6 @@ ShellRoot {
         interval: 1200
         repeat: false
         onTriggered: root.osdVisible = false
-    }
-
-    NotificationServer {
-        id: notifications
-        keepOnReload: false
-        bodySupported: true
-        actionsSupported: true
-        imageSupported: true
-        persistenceSupported: false
-        onNotification: notification => notification.tracked = true
     }
 
     IpcHandler {
@@ -156,12 +170,26 @@ ShellRoot {
             root.closeOverlays();
         }
 
-        function showOsd(icon: string, label: string, value: real) {
-            root.showOsd(icon, label, value);
+        function showOsd(icon: string, label: string, value: real, detailText: string) {
+            root.showOsd(icon, label, value, detailText);
         }
 
         function volume(value: real) {
-            root.showOsd("󰕾", "Volume", value);
+            root.showOsd(value <= 0 ? "󰝟" : "󰕾", "Volume", value);
+        }
+
+        function refreshAudio() {
+            audioProbe.refresh();
+        }
+
+        function capsLock(state: string) {
+            const enabled = state.toLowerCase() === "yes" || state.toLowerCase() === "on" || state === "1";
+            root.showOsd("⇪", "Caps Lock", enabled ? 1 : 0, enabled ? "On" : "Off");
+        }
+
+        function numLock(state: string) {
+            const enabled = state.toLowerCase() === "yes" || state.toLowerCase() === "on" || state === "1";
+            root.showOsd("󰎠", "Num Lock", enabled ? 1 : 0, enabled ? "On" : "Off");
         }
 
         function brightness(value: real) {
@@ -201,6 +229,50 @@ ShellRoot {
         command: ["sh", "-c", "ip route get 1.1.1.1 2>/dev/null | awk '{for (i=1; i<=NF; i++) if ($i == \"dev\") {print \"NET \" $(i+1); exit}}'"]
     }
 
+    PollingCommand {
+        id: titleProbe
+        interval: 1200
+        fallback: "Desktop"
+        command: ["sh", "-c", "hyprctl activewindow 2>/dev/null | awk '/^[[:space:]]*title:/ {sub(/^[[:space:]]*title:[[:space:]]*/, \"\"); print; found=1; exit} END {if (!found) print \"Desktop\"}'"]
+    }
+
+    PollingCommand {
+        id: audioProbe
+        interval: 2000
+        fallback: "VOL --"
+        command: ["sh", "-c", "wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | awk '{if ($3 == \"[MUTED]\") {print \"VOL muted\"; exit} if ($2 != \"\") printf \"VOL %.0f%%\", $2 * 100; else print \"VOL --\"}'"]
+    }
+
+    PollingCommand {
+        id: gpuProbe
+        interval: 3000
+        fallback: ""
+        command: ["sh", "-c", "if command -v nvidia-smi >/dev/null 2>&1; then util=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null | awk 'NR==1{print int($1)}'); [ -n \"$util\" ] && [ \"$util\" -gt 0 ] && printf \"GPU %s%%\" \"$util\"; elif ls /sys/class/drm/card*/device/gpu_busy_percent >/dev/null 2>&1; then util=$(cat /sys/class/drm/card*/device/gpu_busy_percent 2>/dev/null | awk '$1>max{max=$1} END{print int(max)}'); [ -n \"$util\" ] && [ \"$util\" -gt 0 ] && printf \"GPU %s%%\" \"$util\"; fi"]
+    }
+
+    PollingCommand {
+        id: diskProbe
+        interval: 30000
+        fallback: "DISK --"
+        command: ["sh", "-c", "df -h / 2>/dev/null | awk 'NR==2 {print \"DISK \" $5; exit}'"]
+    }
+
+    PollingCommand {
+        id: capsLockProbe
+        interval: 250
+        fallback: "off"
+        command: ["sh", "-c", "hyprctl devices 2>/dev/null | awk '/capsLock:/{caps=$2} /main: yes/{print caps; exit}'"]
+        onTextChanged: root.updateCapsLockState(text)
+    }
+
+    PollingCommand {
+        id: numLockProbe
+        interval: 250
+        fallback: "off"
+        command: ["sh", "-c", "hyprctl devices 2>/dev/null | awk '/numLock:/{num=$2} /main: yes/{print num; exit}'"]
+        onTextChanged: root.updateNumLockState(text)
+    }
+
     Variants {
         model: Quickshell.screens
 
@@ -209,18 +281,14 @@ ShellRoot {
 
             screen: modelData
             clockDate: clock.date
+            windowTitle: titleProbe.text
+            audioText: audioProbe.text
             cpuText: cpuProbe.text
-            memText: memProbe.text
             batteryText: batteryProbe.text
             networkText: networkProbe.text
-            controlCenterOpen: root.controlCenterVisible
-            powerMenuOpen: root.powerMenuVisible
-            themeMenuOpen: root.themeMenuVisible
-            launcherOpen: root.launcherVisible
-            onLauncherRequested: root.toggleLauncher()
+            gpuText: gpuProbe.text
+            onVolumeFeedbackRequested: (icon, value) => root.showOsd(icon, "Volume", value)
             onControlCenterRequested: root.toggleControlCenter()
-            onPowerMenuRequested: root.togglePowerMenu()
-            onThemeMenuRequested: root.toggleThemeMenu()
 
             colors: QtObject {
                 readonly property color bg: root.bg
@@ -243,7 +311,7 @@ ShellRoot {
 
             screen: modelData
             visible: root.launcherVisible
-            topOffset: root.barHeight + 10
+            topOffset: root.barHeight + 2
             onDismissed: root.closeLauncher()
 
             colors: QtObject {
@@ -265,11 +333,13 @@ ShellRoot {
 
             screen: modelData
             visible: root.controlCenterVisible
-            topOffset: root.barHeight + 10
+            topOffset: root.barHeight
             clockDate: clock.date
             cpuText: cpuProbe.text
+            gpuText: gpuProbe.text
             memText: memProbe.text
             batteryText: batteryProbe.text
+            diskText: diskProbe.text
             networkText: networkProbe.text
             onDismissed: root.closeOverlays()
 
@@ -333,28 +403,6 @@ ShellRoot {
     Variants {
         model: Quickshell.screens
 
-        NotificationToasts {
-            required property var modelData
-
-            screen: modelData
-            topOffset: root.barHeight + 12
-            server: notifications
-
-            colors: QtObject {
-                readonly property color bg: root.bg
-                readonly property color panel: root.panel
-                readonly property color panelAlt: root.panelAlt
-                readonly property color fg: root.fg
-                readonly property color muted: root.muted
-                readonly property color accent: root.accent
-                readonly property color danger: root.danger
-            }
-        }
-    }
-
-    Variants {
-        model: Quickshell.screens
-
         Osd {
             required property var modelData
 
@@ -363,6 +411,7 @@ ShellRoot {
             icon: root.osdIcon
             label: root.osdLabel
             value: root.osdValue
+            detailText: root.osdDetailText
 
             colors: QtObject {
                 readonly property color bg: root.bg

@@ -9,8 +9,10 @@ PanelWindow {
     property int topOffset: 46
     property date clockDate
     property string cpuText: "CPU --"
+    property string gpuText: ""
     property string memText: "RAM --"
     property string batteryText: ""
+    property string diskText: "DISK --"
     property string networkText: "NET --"
     property var colors
 
@@ -21,14 +23,27 @@ PanelWindow {
     aboveWindows: true
     exclusiveZone: 0
     implicitWidth: 390
-    implicitHeight: 500
     anchors {
         top: true
+        bottom: true
         right: true
     }
     margins {
-        top: center.topOffset
-        right: 12
+        top: 0
+        bottom: 8
+        right: 8
+    }
+
+    onVisibleChanged: {
+        if (visible)
+            center.forceActiveFocus();
+    }
+
+    Keys.onPressed: event => {
+        if (event.key === Qt.Key_Escape) {
+            center.dismissed();
+            event.accepted = true;
+        }
     }
 
     Rectangle {
@@ -40,23 +55,24 @@ PanelWindow {
 
         ColumnLayout {
             anchors.fill: parent
-            anchors.margins: 14
-            spacing: 12
+            anchors.margins: 16
+            spacing: 8
 
             Rectangle {
+                id: headerSection
                 Layout.fillWidth: true
-                Layout.preferredHeight: 104
+                Layout.preferredHeight: 88
                 radius: 8
                 color: colors.panel
 
                 RowLayout {
                     anchors.fill: parent
-                    anchors.margins: 14
-                    spacing: 12
+                    anchors.margins: 12
+                    spacing: 8
 
-                    ColumnLayout {
+                    RowLayout {
                         Layout.fillWidth: true
-                        spacing: 2
+                        spacing: 8
 
                         Text {
                             color: colors.fg
@@ -66,6 +82,7 @@ PanelWindow {
                         }
 
                         RowLayout {
+                            Layout.alignment: Qt.AlignVCenter
                             spacing: 8
 
                             Text {
@@ -83,140 +100,136 @@ PanelWindow {
                         }
                     }
 
-                    Rectangle {
-                        Layout.preferredWidth: 86
-                        Layout.preferredHeight: 64
-                        radius: 8
-                        color: colors.bg
-
-                        ColumnLayout {
-                            anchors.centerIn: parent
-                            spacing: 2
-
-                            Text {
-                                Layout.alignment: Qt.AlignHCenter
-                                color: colors.accent
-                                font.family: "Symbols Nerd Font Mono"
-                                font.pixelSize: 18
-                                text: "󰖩"
-                            }
-
-                            Text {
-                                Layout.alignment: Qt.AlignHCenter
-                                color: colors.fg
-                                font.pixelSize: 11
-                                font.weight: Font.DemiBold
-                                text: center.networkText.replace("NET ", "")
-                            }
-                        }
-                    }
-                }
-            }
-
-            GridLayout {
-                Layout.fillWidth: true
-                columns: 2
-                columnSpacing: 10
-                rowSpacing: 10
-
-                ActionTile {
-                    icon: "󰖩"
-                    title: "Network"
-                    subtitle: center.networkText.replace("NET ", "")
-                    colors: center.colors
-                    command: ["sh", "-c", "command -v nm-connection-editor >/dev/null && nm-connection-editor || command -v nmtui >/dev/null && foot -e nmtui"]
-                }
-
-                ActionTile {
-                    icon: "󰂯"
-                    title: "Bluetooth"
-                    subtitle: "Devices"
-                    colors: center.colors
-                    command: ["sh", "-c", "command -v blueman-manager >/dev/null && blueman-manager || command -v bluetoothctl >/dev/null && foot -e bluetoothctl"]
-                }
-
-                ActionTile {
-                    icon: "󰕾"
-                    title: "Audio"
-                    subtitle: "Toggle mute"
-                    colors: center.colors
-                    command: ["sh", "-c", "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"]
-                }
-
-                ActionTile {
-                    icon: "󰃠"
-                    title: "Brightness"
-                    subtitle: "Increase"
-                    colors: center.colors
-                    command: ["sh", "-c", "brightnessctl set +10%"]
-                }
-            }
-
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 10
-
-                StatCard {
-                    icon: "󰻠"
-                    label: "CPU"
-                    value: center.cpuText.replace("CPU ", "")
-                    colors: center.colors
-                }
-
-                StatCard {
-                    icon: "󰍛"
-                    label: "RAM"
-                    value: center.memText.replace("RAM ", "")
-                    colors: center.colors
-                }
-
-                StatCard {
-                    icon: "󰁹"
-                    label: "BAT"
-                    value: center.batteryText.length > 0 ? center.batteryText.replace("BAT ", "") : "--"
-                    colors: center.colors
-                    visible: center.batteryText.length > 0
                 }
             }
 
             Rectangle {
+                id: controlsSection
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+                Layout.preferredHeight: 184
                 radius: 8
                 color: colors.panel
 
-                RowLayout {
+                ColumnLayout {
                     anchors.fill: parent
                     anchors.margins: 12
-                    spacing: 10
+                    spacing: 8
 
                     Text {
-                        color: colors.accent
-                        font.family: "Symbols Nerd Font Mono"
-                        font.pixelSize: 18
-                        text: "󰒲"
+                        color: colors.fg
+                        font.pixelSize: 13
+                        font.weight: Font.DemiBold
+                        text: "Controls"
                     }
 
-                    ColumnLayout {
+                    GridLayout {
                         Layout.fillWidth: true
-                        spacing: 2
+                        Layout.fillHeight: true
+                        columns: 2
+                        columnSpacing: 8
+                        rowSpacing: 8
 
-                        Text {
-                            color: colors.fg
-                            font.pixelSize: 13
-                            font.weight: Font.DemiBold
-                            text: "Session Ready"
+                        ActionTile {
+                            icon: "󰖩"
+                            title: "Network"
+                            subtitle: center.networkText.replace("NET ", "")
+                            colors: center.colors
+                            command: ["sh", "-c", "command -v nm-connection-editor >/dev/null && nm-connection-editor || command -v nmtui >/dev/null && foot -e nmtui"]
                         }
 
-                        Text {
-                            Layout.fillWidth: true
-                            color: colors.muted
-                            font.pixelSize: 12
-                            elide: Text.ElideRight
-                            text: "Use the power button for lock, suspend, logout, reboot, or shutdown."
+                        ActionTile {
+                            icon: "󰂯"
+                            title: "Bluetooth"
+                            subtitle: "Devices"
+                            colors: center.colors
+                            command: ["sh", "-c", "command -v blueman-manager >/dev/null && blueman-manager || command -v bluetoothctl >/dev/null && foot -e bluetoothctl"]
+                        }
+
+                        ActionTile {
+                            icon: "󰕾"
+                            title: "Audio"
+                            subtitle: "Toggle mute"
+                            colors: center.colors
+                            command: ["sh", "-c", "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"]
+                        }
+
+                        ActionTile {
+                            icon: "󰃠"
+                            title: "Brightness"
+                            subtitle: "Increase"
+                            colors: center.colors
+                            command: ["sh", "-c", "brightnessctl set +10%"]
                         }
                     }
                 }
+            }
+
+            Rectangle {
+                id: statsSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: 118
+                radius: 8
+                color: colors.panel
+
+                ColumnLayout {
+                    anchors.fill: parent
+                    anchors.margins: 12
+                    spacing: 8
+
+                    Text {
+                        color: colors.fg
+                        font.pixelSize: 13
+                        font.weight: Font.DemiBold
+                        text: "Stats"
+                    }
+
+                    GridLayout {
+                        Layout.fillWidth: true
+                        columns: center.batteryText.length > 0 ? 5 : 4
+                        columnSpacing: 8
+                        rowSpacing: 8
+
+                        StatCard {
+                            icon: "󰻠"
+                            label: "CPU"
+                            value: center.cpuText.replace("CPU ", "")
+                            colors: center.colors
+                        }
+
+                        StatCard {
+                            icon: "󰢮"
+                            label: "GPU"
+                            value: center.gpuText.length > 0 ? center.gpuText.replace("GPU ", "") : "--"
+                            colors: center.colors
+                        }
+
+                        StatCard {
+                            icon: "󰍛"
+                            label: "RAM"
+                            value: center.memText.replace("RAM ", "")
+                            colors: center.colors
+                        }
+
+                        StatCard {
+                            icon: "󰁹"
+                            label: "BAT"
+                            value: center.batteryText.length > 0 ? center.batteryText.replace("BAT ", "") : "--"
+                            colors: center.colors
+                            visible: center.batteryText.length > 0
+                        }
+
+                        StatCard {
+                            icon: "󰋊"
+                            label: "DISK"
+                            value: center.diskText.replace("DISK ", "")
+                            colors: center.colors
+                        }
+                    }
+                }
+            }
+
+            Item {
+                Layout.fillHeight: true
             }
         }
     }
@@ -231,8 +244,11 @@ PanelWindow {
         property var colors
 
         Layout.fillWidth: true
-        Layout.preferredHeight: 82
+        Layout.fillHeight: true
+        Layout.minimumWidth: 0
+        Layout.preferredHeight: 76
         cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
         onClicked: runner.exec(command)
 
         Process {
@@ -242,24 +258,24 @@ PanelWindow {
         Rectangle {
             anchors.fill: parent
             radius: 8
-            color: tile.containsMouse ? tile.colors.panelAlt : tile.colors.panel
+            color: tile.containsMouse ? tile.colors.panelAlt : tile.colors.bg
             border.width: 1
             border.color: tile.containsMouse ? tile.colors.accent : "transparent"
 
             RowLayout {
                 anchors.fill: parent
-                anchors.margins: 12
-                spacing: 10
+                anchors.margins: 8
+                spacing: 8
 
                 Rectangle {
                     Layout.preferredWidth: 34
                     Layout.preferredHeight: 34
                     radius: 8
-                    color: tile.colors.bg
+                    color: tile.colors.panel
 
                     Text {
                         anchors.centerIn: parent
-                        color: tile.colors.accent
+                        color: colors.accent
                         font.family: "Symbols Nerd Font Mono"
                         font.pixelSize: 16
                         text: tile.icon
@@ -300,9 +316,11 @@ PanelWindow {
         property var colors
 
         Layout.fillWidth: true
-        Layout.preferredHeight: 70
+        Layout.preferredHeight: 74
         radius: 8
-        color: colors.panel
+        color: colors.bg
+        border.width: 1
+        border.color: "transparent"
 
         ColumnLayout {
             anchors.centerIn: parent
@@ -333,4 +351,5 @@ PanelWindow {
             }
         }
     }
+
 }
