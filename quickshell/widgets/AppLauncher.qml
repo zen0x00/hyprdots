@@ -54,9 +54,9 @@ PanelWindow {
         id: panel
         anchors.fill: parent
         radius: 8
-        color: colors.bg
+        color: Qt.alpha(colors.bg, 0.88)
         border.width: 1
-        border.color: colors.panelAlt
+        border.color: Qt.alpha(colors.panelAlt, 0.6)
 
         ColumnLayout {
             anchors.fill: parent
@@ -67,7 +67,9 @@ PanelWindow {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 40
                 radius: 8
-                color: colors.panel
+                color: Qt.alpha(colors.fg, 0.06)
+                border.width: 1
+                border.color: Qt.alpha(colors.panelAlt, 0.5)
 
                 TextInput {
                     id: search
@@ -77,7 +79,7 @@ PanelWindow {
                     verticalAlignment: TextInput.AlignVCenter
                     color: colors.fg
                     selectionColor: colors.accent
-                    selectedTextColor: "#071015"
+                    selectedTextColor: colors.bg
                     font.pixelSize: 15
                     clip: true
 
@@ -172,7 +174,7 @@ PanelWindow {
                                 Text {
                                     anchors.centerIn: parent
                                     visible: row.iconSource.length === 0
-                                    color: "#071015"
+                                    color: colors.bg
                                     font.pixelSize: 13
                                     font.weight: Font.Bold
                                     text: row.modelData.name.length > 0 ? row.modelData.name[0].toUpperCase() : "?"

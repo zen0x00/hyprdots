@@ -7,7 +7,8 @@ Item {
     property var tokens
     property int focusedId: Hyprland.focusedWorkspace ? Hyprland.focusedWorkspace.id : 0
     property int refreshKey: 0
-    readonly property var workspaceIds: [1, 2, 3, 4, 5]
+    readonly property var persistentWorkspaceIds: [1, 2, 3, 4, 5]
+    readonly property var visibleWorkspaceIds: buildVisibleWorkspaceIds(refreshKey, focusedId)
     readonly property int indicatorHeight: 3
     readonly property int indicatorWidth: Math.max(10, tokens.moduleHeight - 10)
 
@@ -44,6 +45,20 @@ Item {
         return ((tokens.moduleHeight - indicatorWidth) / 2);
     }
 
+    function buildVisibleWorkspaceIds(key, activeId) {
+        const visible = persistentWorkspaceIds.slice();
+        const list = Hyprland.workspaces.values;
+
+        for (let i = 0; i < list.length; i++) {
+            const id = list[i].id;
+            if (id >= 6 && id <= 10 && visible.indexOf(id) === -1)
+                visible.push(id);
+        }
+
+        visible.sort((a, b) => a - b);
+        return visible;
+    }
+
     Connections {
         target: Hyprland.workspaces
         function onValuesChanged() {
@@ -76,7 +91,7 @@ Item {
 
         Repeater {
             id: workspaceRepeater
-            model: workspaces.workspaceIds
+            model: workspaces.visibleWorkspaceIds
 
             Rectangle {
                 id: workspaceButton

@@ -29,70 +29,70 @@ PanelWindow {
         bottom: Math.max(20, Math.round((menu.screen.height - menu.implicitHeight) / 2))
     }
 
-    onVisibleChanged: {
-        if (visible)
-            menu.forceActiveFocus();
-    }
-
-    Keys.onPressed: event => {
-        if (event.key === Qt.Key_Escape) {
-            menu.dismissed();
-            event.accepted = true;
-        }
-    }
-
     Rectangle {
+        opacity: 0.85
         anchors.fill: parent
         radius: 8
         color: colors.bg
         border.width: 1
         border.color: colors.panelAlt
 
-        ColumnLayout {
+        FocusScope {
+            id: keyboardScope
             anchors.fill: parent
-            anchors.margins: 16
-            spacing: 14
+            focus: menu.visible
 
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                spacing: 10
+            Keys.onEscapePressed: event => {
+                menu.dismissed();
+                event.accepted = true;
+            }
 
-                PowerAction {
-                    icon: "󰌾"
-                    colors: menu.colors
-                    command: ["sh", "-c", "loginctl lock-session || hyprlock || swaylock"]
-                    onRan: menu.dismissed()
-                }
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 16
+                spacing: 14
 
-                PowerAction {
-                    icon: "󰒲"
-                    colors: menu.colors
-                    command: ["systemctl", "suspend"]
-                    onRan: menu.dismissed()
-                }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    spacing: 10
 
-                PowerAction {
-                    icon: "󰍃"
-                    colors: menu.colors
-                    command: ["sh", "-c", "hyprctl dispatch exit || loginctl terminate-user \"$USER\""]
-                    onRan: menu.dismissed()
-                }
+                    PowerAction {
+                        icon: "󰌾"
+                        colors: menu.colors
+                        command: ["sh", "-c", "loginctl lock-session || hyprlock || swaylock"]
+                        onRan: menu.dismissed()
+                    }
 
-                PowerAction {
-                    icon: "󰜉"
-                    danger: true
-                    colors: menu.colors
-                    command: ["systemctl", "reboot"]
-                    onRan: menu.dismissed()
-                }
+                    PowerAction {
+                        icon: "󰒲"
+                        colors: menu.colors
+                        command: ["systemctl", "suspend"]
+                        onRan: menu.dismissed()
+                    }
 
-                PowerAction {
-                    icon: "⏻"
-                    danger: true
-                    colors: menu.colors
-                    command: ["systemctl", "poweroff"]
-                    onRan: menu.dismissed()
+                    PowerAction {
+                        icon: "󰍃"
+                        colors: menu.colors
+                        command: ["sh", "-c", "hyprctl dispatch exit || loginctl terminate-user \"$USER\""]
+                        onRan: menu.dismissed()
+                    }
+
+                    PowerAction {
+                        icon: "󰜉"
+                        danger: true
+                        colors: menu.colors
+                        command: ["systemctl", "reboot"]
+                        onRan: menu.dismissed()
+                    }
+
+                    PowerAction {
+                        icon: "⏻"
+                        danger: true
+                        colors: menu.colors
+                        command: ["systemctl", "poweroff"]
+                        onRan: menu.dismissed()
+                    }
                 }
             }
         }

@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/.." && pwd)"
+
+[[ $# -eq 1 ]] || { echo "Usage: theme <wallpaper-image>" >&2; exit 1; }
+[[ -f "$1" ]] || { echo "File not found: $1" >&2; exit 1; }
+
+WALLPAPER="$(realpath "$1")"
+
+# Set wallpaper
+if command -v awww >/dev/null 2>&1; then
+    awww img "$WALLPAPER" --transition-type grow --transition-duration 1 2>/dev/null || true
+fi
+
+# Render all configs via matugen
+matugen image "$WALLPAPER" --prefer less-saturation --mode dark
+
+# Reload Hyprland
+command -v hyprctl >/dev/null 2>&1 && hyprctl reload 2>/dev/null || true
+
+# Reload Kitty
+command -v pkill >/dev/null 2>&1 && pkill -SIGUSR1 kitty 2>/dev/null || true
+
+# Restart Quickshell
+if command -v quickshell >/dev/null 2>&1; then
+    quickshell kill -p "$ROOT/quickshell" 2>/dev/null || true
+    nohup quickshell -p "$ROOT/quickshell" >/tmp/quickshell.log 2>&1 &
+fi
+
+echo "Theme applied from: $WALLPAPER"

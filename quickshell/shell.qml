@@ -12,7 +12,6 @@ ShellRoot {
     property bool launcherVisible: false
     property bool controlCenterVisible: false
     property bool powerMenuVisible: false
-    property bool themeMenuVisible: false
     property bool osdVisible: false
     property string osdIcon: ""
     property string osdLabel: ""
@@ -23,19 +22,18 @@ ShellRoot {
 
     Component.onCompleted: Qt.application.font.family = "JetBrainsMono Nerd Font Propo"
 
-    readonly property color bg: "#1e1e2e"
-    readonly property color panel: "#1e1e2e"
-    readonly property color panelAlt: "#1e1e2e"
-    readonly property color fg: "#cdd6f4"
-    readonly property color muted: "#6c7086"
-    readonly property color accent: "#89b4fa"
-    readonly property color danger: "#f38ba8"
+    readonly property color bg:       Colors.bg
+    readonly property color panel:    Colors.panel
+    readonly property color panelAlt: Colors.panelAlt
+    readonly property color fg:       Colors.fg
+    readonly property color muted:    Colors.muted
+    readonly property color accent:   Colors.accent
+    readonly property color danger:   Colors.danger
     readonly property int barHeight: 58
 
     function toggleLauncher() {
         controlCenterVisible = false;
         powerMenuVisible = false;
-        themeMenuVisible = false;
         launcherVisible = !launcherVisible;
     }
 
@@ -46,29 +44,19 @@ ShellRoot {
     function toggleControlCenter() {
         launcherVisible = false;
         powerMenuVisible = false;
-        themeMenuVisible = false;
         controlCenterVisible = !controlCenterVisible;
     }
 
     function togglePowerMenu() {
         launcherVisible = false;
         controlCenterVisible = false;
-        themeMenuVisible = false;
         powerMenuVisible = !powerMenuVisible;
-    }
-
-    function toggleThemeMenu() {
-        launcherVisible = false;
-        controlCenterVisible = false;
-        powerMenuVisible = false;
-        themeMenuVisible = !themeMenuVisible;
     }
 
     function closeOverlays() {
         launcherVisible = false;
         controlCenterVisible = false;
         powerMenuVisible = false;
-        themeMenuVisible = false;
     }
 
     function showOsd(icon, label, value, detailText) {
@@ -151,19 +139,6 @@ ShellRoot {
 
         function closePowerMenu() {
             root.powerMenuVisible = false;
-        }
-
-        function toggleThemeMenu() {
-            root.toggleThemeMenu();
-        }
-
-        function openThemeMenu() {
-            root.closeOverlays();
-            root.themeMenuVisible = true;
-        }
-
-        function closeThemeMenu() {
-            root.themeMenuVisible = false;
         }
 
         function closeAll() {
@@ -273,6 +248,27 @@ ShellRoot {
         onTextChanged: root.updateNumLockState(text)
     }
 
+    PollingCommand {
+        id: mediaTitleProbe
+        interval: 2000
+        fallback: ""
+        command: ["sh", "-c", "playerctl metadata title 2>/dev/null"]
+    }
+
+    PollingCommand {
+        id: mediaArtistProbe
+        interval: 2000
+        fallback: ""
+        command: ["sh", "-c", "playerctl metadata artist 2>/dev/null"]
+    }
+
+    PollingCommand {
+        id: mediaStatusProbe
+        interval: 2000
+        fallback: ""
+        command: ["sh", "-c", "playerctl status 2>/dev/null"]
+    }
+
     Variants {
         model: Quickshell.screens
 
@@ -341,29 +337,9 @@ ShellRoot {
             batteryText: batteryProbe.text
             diskText: diskProbe.text
             networkText: networkProbe.text
-            onDismissed: root.closeOverlays()
-
-            colors: QtObject {
-                readonly property color bg: root.bg
-                readonly property color panel: root.panel
-                readonly property color panelAlt: root.panelAlt
-                readonly property color fg: root.fg
-                readonly property color muted: root.muted
-                readonly property color accent: root.accent
-                readonly property color danger: root.danger
-            }
-        }
-    }
-
-    Variants {
-        model: Quickshell.screens
-
-        ThemeMenu {
-            required property var modelData
-
-            screen: modelData
-            visible: root.themeMenuVisible
-            topOffset: root.barHeight + 10
+            mediaTitle: mediaTitleProbe.text
+            mediaArtist: mediaArtistProbe.text
+            mediaStatus: mediaStatusProbe.text
             onDismissed: root.closeOverlays()
 
             colors: QtObject {

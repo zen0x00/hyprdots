@@ -46,7 +46,7 @@ PanelWindow {
         readonly property int titleMinWidth: 0
         readonly property int clockWidth: 100
         readonly property int clockFontSize: 12
-        readonly property int titleFontSize: 11
+        readonly property int titleFontSize: 13
         readonly property int textFontSize: 10
         readonly property int iconFontSize: 12
         readonly property int rightTextFontSize: 9
@@ -330,6 +330,7 @@ PanelWindow {
 
     Rectangle {
         id: shellSurface
+        opacity: 0.85
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
@@ -396,8 +397,10 @@ PanelWindow {
                     color: ui.textPrimary
                     elide: Text.ElideRight
                     horizontalAlignment: Text.AlignHCenter
+                    font.family: "Sans Serif"
                     font.pixelSize: ui.titleFontSize
-                    font.weight: Font.Bold
+                    font.weight: Font.DemiBold
+                    renderType: Text.NativeRendering
                     text: bar.resolvedTitle
                 }
 

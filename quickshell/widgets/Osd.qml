@@ -30,6 +30,7 @@ PanelWindow {
     }
 
     Rectangle {
+        opacity: 0.85
         anchors.fill: parent
         radius: compact ? 14 : 8
         color: colors.bg

@@ -25,8 +25,9 @@ PanelWindow {
     }
 
     Rectangle {
+        opacity: 0.85
         anchors.fill: parent
-        color: colors.surface
+        color: colors.bg
 
         Rectangle {
             width: 300

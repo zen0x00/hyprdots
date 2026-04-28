@@ -14,6 +14,9 @@ PanelWindow {
     property string batteryText: ""
     property string diskText: "DISK --"
     property string networkText: "NET --"
+    property string mediaTitle: ""
+    property string mediaArtist: ""
+    property string mediaStatus: ""
     property var colors
 
     signal dismissed()
@@ -47,6 +50,7 @@ PanelWindow {
     }
 
     Rectangle {
+        opacity: 0.85
         anchors.fill: parent
         radius: 8
         color: colors.bg
@@ -57,6 +61,77 @@ PanelWindow {
             anchors.fill: parent
             anchors.margins: 16
             spacing: 8
+
+            Rectangle {
+                id: mediaSection
+                Layout.fillWidth: true
+                Layout.preferredHeight: 100
+                radius: 8
+                color: colors.panel
+
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.margins: 12
+                    spacing: 12
+
+                    Rectangle {
+                        Layout.preferredWidth: 76
+                        Layout.preferredHeight: 76
+                        radius: 8
+                        color: colors.panelAlt
+
+                        Text {
+                            anchors.centerIn: parent
+                            color: colors.muted
+                            font.family: "Symbols Nerd Font Mono"
+                            font.pixelSize: 28
+                            text: center.mediaTitle.length > 0 ? "" : "󰍷"
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 4
+
+                        Text {
+                            Layout.fillWidth: true
+                            color: colors.fg
+                            font.pixelSize: 14
+                            font.weight: Font.DemiBold
+                            text: center.mediaTitle.length > 0 ? center.mediaTitle : "No media playing"
+                            elide: Text.ElideRight
+                        }
+
+                        Text {
+                            Layout.fillWidth: true
+                            color: colors.muted
+                            font.pixelSize: 12
+                            text: center.mediaTitle.length > 0 ? center.mediaArtist : "Install playerctl"
+                            elide: Text.ElideRight
+                        }
+
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 8
+
+                            MediaButton {
+                                icon: "󰒭"
+                                command: ["playerctl", "previous"]
+                            }
+
+                            MediaButton {
+                                icon: center.mediaStatus === "Playing" ? "󰏤" : "󰐊"
+                                command: ["playerctl", "play-pause"]
+                            }
+
+                            MediaButton {
+                                icon: "󰈔"
+                                command: ["playerctl", "next"]
+                            }
+                        }
+                    }
+                }
+            }
 
             Rectangle {
                 id: headerSection
@@ -348,6 +423,36 @@ PanelWindow {
                 font.pixelSize: 12
                 font.weight: Font.Bold
                 text: stat.value
+            }
+        }
+    }
+
+    component MediaButton: MouseArea {
+        id: btn
+
+        property string icon: ""
+        property var command: []
+        Layout.preferredWidth: 40
+        Layout.preferredHeight: 40
+        cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
+        onClicked: mediaRunner.exec(command)
+
+        Process {
+            id: mediaRunner
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            radius: 8
+            color: btn.containsMouse ? colors.panelAlt : colors.bg
+
+            Text {
+                anchors.centerIn: parent
+                color: colors.accent
+                font.family: "Symbols Nerd Font Mono"
+                font.pixelSize: 16
+                text: btn.icon
             }
         }
     }
