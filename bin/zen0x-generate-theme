@@ -10,8 +10,6 @@ TEMPLATE_TARGETS = [
     ("templates/kitty/colors.conf.tpl",      "kitty/colors.conf"),
     ("templates/hyprland/colors.conf.tpl",   "hypr/colors.conf"),
     ("templates/quickshell/Colors.qml.tpl",  "quickshell/Colors.qml"),
-    ("templates/gtk/gtk.css.tpl",            "~/.config/gtk-4.0/gtk.css"),
-    ("templates/gtk/gtk.css.tpl",            "~/.config/gtk-3.0/gtk.css"),
     ("templates/waybar/colors.css.tpl",      "waybar/colors.css"),
     ("templates/rofi/colors.rasi.tpl",       "rofi/colors.rasi"),
     ("templates/fastfetch/config.jsonc.tpl", "fastfetch/config.jsonc"),
