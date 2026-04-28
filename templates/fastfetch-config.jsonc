@@ -9,8 +9,8 @@
   "display": {
     "separator": " ",
     "color": {
-      "keys":   "38;2;151;213;165",
-      "output": "38;2;193;201;191"
+      "keys":   "38;2;{{ colors.primary.default.red }};{{ colors.primary.default.green }};{{ colors.primary.default.blue }}",
+      "output": "38;2;{{ colors.on_surface_variant.default.red }};{{ colors.on_surface_variant.default.green }};{{ colors.on_surface_variant.default.blue }}"
     }
   },
 
