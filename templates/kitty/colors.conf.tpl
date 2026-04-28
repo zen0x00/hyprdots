@@ -1,10 +1,10 @@
 foreground           {{ semantic.fg }}
 background           {{ semantic.bg }}
-selection_foreground {{ semantic.bg }}
-selection_background {{ semantic.accent }}
+selection_foreground {{ semantic.muted }}
+selection_background {{ palette.grey_500 }}
 url_color            {{ semantic.link }}
 cursor               {{ semantic.fg }}
-cursor_text_color    {{ semantic.bg }}
+cursor_text_color    {{ semantic.panel_alt }}
 
 color0  {{ palette.black }}
 color1  {{ palette.red_dark }}
@@ -13,8 +13,8 @@ color3  {{ palette.yellow_dark }}
 color4  {{ palette.blue_dark }}
 color5  {{ palette.purple_dark }}
 color6  {{ palette.teal_dark }}
-color7  {{ palette.grey_150 }}
-color8  {{ palette.grey_350 }}
+color7  {{ palette.grey_300 }}
+color8  {{ palette.grey_250 }}
 color9  {{ palette.red_light }}
 color10 {{ palette.green_light }}
 color11 {{ palette.yellow_light }}

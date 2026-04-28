@@ -1,0 +1,103 @@
+@import "colors.rasi"
+
+configuration {
+    modi:                   "drun,run";
+    show-icons:             false;
+    font:                   "JetBrainsMono Nerd Font Propo 11";
+    me-select-entry:        "";
+    me-accept-entry:        "MousePrimary,Return";
+    hover-select:           true;
+    scroll-method:          1;
+    scrollbar:              false;
+    location:               0;
+    anchor:                 0;
+    width:                  450;
+    height:                 520;
+}
+
+* {
+    border:   0;
+    margin:   0;
+    padding:  0;
+    spacing:  0;
+}
+
+window {
+    background-color:   @bg;
+    border:             2px;
+    border-color:       @accent;
+    border-radius:      16px;
+    padding:            24px 24px 16px 24px;
+}
+
+mainbox {
+    background-color:   transparent;
+    padding:            0;
+    spacing:            16px;
+    children:           "inputbar,listview";
+}
+
+inputbar {
+    background-color:   @fg-06;
+    border:             2px;
+    border-color:       @accent;
+    border-radius:      12px;
+    padding:            4px 16px;
+    children:           "entry";
+    min-height:         46px;
+}
+
+entry {
+    background-color:   transparent;
+    text-color:         @fg;
+    placeholder:        "Search themes...";
+    placeholder-color:  @muted;
+    vertical-align:     0.5;
+    cursor:             text;
+    font:               "JetBrainsMono Nerd Font Propo 15";
+}
+
+listview {
+    background-color:   transparent;
+    spacing:            6px;
+    scrollbar:          false;
+    cycle:              true;
+    layout:             vertical;
+}
+
+element {
+    background-color:   transparent;
+    border:             2px;
+    border-color:       transparent;
+    border-radius:      10px;
+    padding:            10px 16px;
+    spacing:            10px;
+    orientation:        horizontal;
+    min-height:         44px;
+    cursor:             pointer;
+}
+
+element normal.normal {
+    background-color:   transparent;
+    text-color:         @fg;
+    border-color:       transparent;
+}
+
+element alternate.normal {
+    background-color:   transparent;
+    text-color:         @fg;
+    border-color:       transparent;
+}
+
+element selected.normal {
+    background-color:   @accent-28;
+    text-color:         @accent;
+    border-color:       @accent-60;
+}
+
+element-text {
+    background-color:   transparent;
+    text-color:         inherit;
+    vertical-align:     0.5;
+    font:               "JetBrainsMono Nerd Font Propo 13";
+}

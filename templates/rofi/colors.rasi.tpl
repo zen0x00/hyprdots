@@ -17,4 +17,8 @@
     accent-16:    #{{ semantic.accent | strip_hash }}29;
     accent-60:    #{{ semantic.accent | strip_hash }}99;
     accent-35:    #{{ semantic.accent | strip_hash }}59;
+    bg-99:        #{{ semantic.bg | strip_hash }}FC;
+    accent-50:    #{{ semantic.accent | strip_hash }}80;
+    accent-70:    #{{ semantic.accent | strip_hash }}B3;
+    muted-50:     #{{ semantic.muted | strip_hash }}80;
 }

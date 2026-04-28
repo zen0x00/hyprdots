@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/.." && pwd)"
+THEMES_DIR="$ROOT/themes"
+
+get_themes() {
+    find "$THEMES_DIR" -mindepth 1 -maxdepth 1 -type d -exec test -f "{}/colors.toml" \; -print \
+        | xargs -I{} basename {} \
+        | sort
+}
+
+get_current_theme() {
+    if [ -f "$ROOT/kitty/colors.conf" ]; then
+        # Extract theme from the generated file comment or use a state file
+        if [ -f "$ROOT/.current-theme" ]; then
+            cat "$ROOT/.current-theme"
+        fi
+    fi
+}
+
+show_menu() {
+    local themes
+    themes=$(get_themes)
+
+    if [ -z "$themes" ]; then
+        echo "No themes found in $THEMES_DIR" >&2
+        exit 1
+    fi
+
+    echo "$themes" | rofi -dmenu -i -p "Select theme" -theme "$ROOT/rofi/theme-menu.rasi"
+}
+
+main() {
+    local selected
+    selected=$(show_menu)
+
+    if [ -z "$selected" ]; then
+        echo "No theme selected." >&2
+        exit 0
+    fi
+
+    echo "$selected" > "$ROOT/.current-theme"
+    "$ROOT/bin/zen0x-apply-theme" "$selected"
+}
+
+main "$@"

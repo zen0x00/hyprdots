@@ -2,11 +2,12 @@
 
 configuration {
     modi:                   "drun";
-    show-icons:             true;
+    show-icons:             false;
     drun-display-format:    "{name}";
-    font:                   "JetBrainsMono Nerd Font Propo 11";
+    font:                   "JetBrainsMono Nerd Font Mono 12";
     me-select-entry:        "";
     me-accept-entry:        "MousePrimary";
+    prompt:                 " ";
 }
 
 * {
@@ -16,13 +17,14 @@ configuration {
     spacing:  0;
 }
 
+/* ── Window ─────────────────────────────────────────────── */
+
 window {
-    background-color:   @bg-88;
+    background-color:   @bg-99;
     border:             1px;
-    border-color:       @panel-alt-60;
-    border-radius:      8px;
-    width:              560px;
-    height:             440px;
+    border-color:       @accent-50;
+    border-radius:      20px;
+    width:              600px;
     location:           center;
     anchor:             center;
     x-offset:           0;
@@ -31,28 +33,36 @@ window {
 
 mainbox {
     background-color:   transparent;
-    padding:            12px;
-    spacing:            10px;
-    children:           [inputbar, listview];
+    padding:            20px;
+    spacing:            16px;
+    children:           [inputbar, listview, message];
 }
 
 /* ── Search bar ─────────────────────────────────────────── */
 
 inputbar {
-    background-color:   @fg-06;
+    background-color:   @panel-alt;
     border:             1px;
-    border-color:       @panel-alt-50;
-    border-radius:      8px;
-    padding:            0px 14px;
-    children:           [entry];
-    min-height:         40px;
+    border-color:       @accent-50;
+    border-radius:      12px;
+    padding:            14px 18px;
+    children:           [prompt, entry];
+    min-height:         0;
+    spacing:            10px;
+}
+
+prompt {
+    background-color:   transparent;
+    color:              @accent;
+    vertical-align:     0.5;
+    font:               "JetBrainsMono Nerd Font Propo 12";
 }
 
 entry {
     background-color:   transparent;
     color:              @fg;
-    placeholder:        "Search apps";
-    placeholder-color:  @muted;
+    placeholder:        "Search applications…";
+    placeholder-color:  @muted-50;
     vertical-align:     0.5;
     cursor:             text;
 }
@@ -66,29 +76,35 @@ listview {
     dynamic:            true;
     cycle:              true;
     layout:             vertical;
+    lines:              8;
 }
 
 element {
     background-color:   transparent;
-    border:             1px;
+    border:             0 0 0 3px;
     border-color:       transparent;
-    border-radius:      8px;
-    padding:            0px 10px;
-    spacing:            10px;
+    border-radius:      12px;
+    padding:            10px 14px;
+    spacing:            14px;
     orientation:        horizontal;
-    min-height:         54px;
+    min-height:         0;
     cursor:             pointer;
 }
 
-element.normal.normal,
+element.normal.normal {
+    background-color:   transparent;
+    border-color:       transparent;
+}
+
 element.alternate.normal {
     background-color:   transparent;
     border-color:       transparent;
 }
 
 element.selected.normal {
-    background-color:   @accent-28;
-    border-color:       @accent-60;
+    background-color:   @accent-16;
+    border-color:       @accent-70;
+    border-radius:      0 12px 12px 0;
 }
 
 element.normal.urgent,
@@ -97,32 +113,36 @@ element.alternate.urgent {
 }
 
 element.selected.urgent {
-    background-color:   @accent-28;
-    border-color:       @accent-60;
+    background-color:   @accent-16;
+    border-color:       @accent-70;
     color:              @danger;
-}
-
-element-icon {
-    background-color:   transparent;
-    size:               28px;
-    border-radius:      7px;
-    vertical-align:     0.5;
-    horizontal-align:   0.5;
 }
 
 element-text {
     background-color:   transparent;
     color:              @fg;
     vertical-align:     0.5;
-    highlight:          none;
-    cursor:             inherit;
+    highlight:          bold;
 }
 
 element-text.selected {
     color:              @accent;
 }
 
-element-text.normal.normal,
-element-text.alternate.normal {
+element-text.alternate {
     color:              @fg;
+}
+
+/* ── Message / no-matches ───────────────────────────────── */
+
+message {
+    background-color:   transparent;
+    padding:            4px 0 0;
+}
+
+textbox {
+    background-color:   transparent;
+    color:              @muted;
+    font:               "JetBrainsMono Nerd Font Propo 10";
+    horizontal-align:   0.5;
 }

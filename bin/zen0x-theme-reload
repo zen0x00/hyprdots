@@ -16,12 +16,17 @@ fi
 if command -v pkill >/dev/null 2>&1; then
     pkill -SIGUSR1 kitty 2>/dev/null || true
     pkill -SIGUSR2 waybar 2>/dev/null || true
+    pkill swayosd-server 2>/dev/null || true
 fi
+
+command -v swayosd-server >/dev/null 2>&1 && swayosd-server &>/dev/null &
+
+command -v swaync-client >/dev/null 2>&1 && swaync-client --reload-css 2>/dev/null || true
 
 command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
 
 if [ "$status" -eq 0 ]; then
-    echo "Reloaded: Hyprland, Kitty, Waybar."
+    echo "Reloaded: Hyprland, Kitty, Waybar, SwayNC, SwayOSD."
 else
     echo "Theme files generated, but one or more reload steps failed." >&2
 fi
