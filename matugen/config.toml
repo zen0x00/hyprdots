@@ -28,4 +28,4 @@ output_path = '~/dotfiles/fastfetch/config.jsonc'
 
 [templates.vscode]
 input_path  = '~/dotfiles/templates/vscode-colors.json'
-output_path = '~/.config/Code/User/matugen-colors.json'
+output_path = '~/.cache/matugen/vscode-colors.json'

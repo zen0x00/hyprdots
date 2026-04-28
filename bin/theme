@@ -20,31 +20,6 @@ matugen image "$WALLPAPER" --prefer less-saturation --mode dark
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
 gsettings set org.gnome.desktop.interface gtk-theme '' 2>/dev/null || true
 
-# Merge VSCode colors into settings.json
-VSCODE_SETTINGS="$HOME/.config/Code/User/settings.json"
-VSCODE_COLORS="$HOME/.config/Code/User/matugen-colors.json"
-if [[ -f "$VSCODE_COLORS" && -f "$VSCODE_SETTINGS" ]]; then
-    python3 - <<'PYEOF'
-import re, json, os
-settings_path = os.path.expanduser('~/.config/Code/User/settings.json')
-colors_path   = os.path.expanduser('~/.config/Code/User/matugen-colors.json')
-
-with open(settings_path) as f:
-    raw = f.read()
-
-raw = re.sub(r'//[^\n]*', '', raw)
-raw = re.sub(r'/\*.*?\*/', '', raw, flags=re.DOTALL)
-raw = re.sub(r',(\s*[}\]])', r'\1', raw)
-
-settings = json.loads(raw)
-with open(colors_path) as f:
-    colors = json.load(f)
-
-settings.update(colors)
-with open(settings_path, 'w') as f:
-    json.dump(settings, f, indent=2)
-PYEOF
-fi
 
 # Restart Quickshell with new Colors.qml
 if command -v quickshell >/dev/null 2>&1; then
