@@ -1,0 +1,128 @@
+@import "colors.rasi"
+
+configuration {
+    modi:                   "drun";
+    show-icons:             true;
+    drun-display-format:    "{name}";
+    font:                   "JetBrainsMono Nerd Font Propo 11";
+    me-select-entry:        "";
+    me-accept-entry:        "MousePrimary";
+}
+
+* {
+    border:   0;
+    margin:   0;
+    padding:  0;
+    spacing:  0;
+}
+
+window {
+    background-color:   @bg-88;
+    border:             1px;
+    border-color:       @panel-alt-60;
+    border-radius:      8px;
+    width:              560px;
+    height:             440px;
+    location:           center;
+    anchor:             center;
+    x-offset:           0;
+    y-offset:           0;
+}
+
+mainbox {
+    background-color:   transparent;
+    padding:            12px;
+    spacing:            10px;
+    children:           [inputbar, listview];
+}
+
+/* ── Search bar ─────────────────────────────────────────── */
+
+inputbar {
+    background-color:   @fg-06;
+    border:             1px;
+    border-color:       @panel-alt-50;
+    border-radius:      8px;
+    padding:            0px 14px;
+    children:           [entry];
+    min-height:         40px;
+}
+
+entry {
+    background-color:   transparent;
+    color:              @fg;
+    placeholder:        "Search apps";
+    placeholder-color:  @muted;
+    vertical-align:     0.5;
+    cursor:             text;
+}
+
+/* ── App list ───────────────────────────────────────────── */
+
+listview {
+    background-color:   transparent;
+    spacing:            4px;
+    scrollbar:          false;
+    dynamic:            true;
+    cycle:              true;
+    layout:             vertical;
+}
+
+element {
+    background-color:   transparent;
+    border:             1px;
+    border-color:       transparent;
+    border-radius:      8px;
+    padding:            0px 10px;
+    spacing:            10px;
+    orientation:        horizontal;
+    min-height:         54px;
+    cursor:             pointer;
+}
+
+element.normal.normal,
+element.alternate.normal {
+    background-color:   transparent;
+    border-color:       transparent;
+}
+
+element.selected.normal {
+    background-color:   @accent-28;
+    border-color:       @accent-60;
+}
+
+element.normal.urgent,
+element.alternate.urgent {
+    color:              @danger;
+}
+
+element.selected.urgent {
+    background-color:   @accent-28;
+    border-color:       @accent-60;
+    color:              @danger;
+}
+
+element-icon {
+    background-color:   transparent;
+    size:               28px;
+    border-radius:      7px;
+    vertical-align:     0.5;
+    horizontal-align:   0.5;
+}
+
+element-text {
+    background-color:   transparent;
+    color:              @fg;
+    vertical-align:     0.5;
+    highlight:          none;
+    cursor:             inherit;
+}
+
+element-text.selected {
+    color:              @accent;
+}
+
+element-text.normal.normal,
+element-text.alternate.normal {
+    color:              @fg;
+}

@@ -1,10 +1,10 @@
-foreground           #D3C6AA
-background           #2B3339
-selection_foreground #2B3339
-selection_background #7FBBB3
-url_color            #7FBBB3
-cursor               #7FBBB3
-cursor_text_color    #2B3339
+foreground           {{ semantic.fg }}
+background           {{ semantic.bg }}
+selection_foreground {{ semantic.bg }}
+selection_background {{ semantic.accent }}
+url_color            {{ semantic.accent }}
+cursor               {{ semantic.accent }}
+cursor_text_color    {{ semantic.bg }}
 
 # Everforest terminal palette
 color0  #2D353B

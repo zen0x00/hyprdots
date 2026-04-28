@@ -12,6 +12,7 @@ ShellRoot {
     property bool launcherVisible: false
     property bool controlCenterVisible: false
     property bool powerMenuVisible: false
+    property bool themeMenuVisible: false
     property bool osdVisible: false
     property string osdIcon: ""
     property string osdLabel: ""
@@ -34,6 +35,7 @@ ShellRoot {
     function toggleLauncher() {
         controlCenterVisible = false;
         powerMenuVisible = false;
+        themeMenuVisible = false;
         launcherVisible = !launcherVisible;
     }
 
@@ -44,19 +46,29 @@ ShellRoot {
     function toggleControlCenter() {
         launcherVisible = false;
         powerMenuVisible = false;
+        themeMenuVisible = false;
         controlCenterVisible = !controlCenterVisible;
     }
 
     function togglePowerMenu() {
         launcherVisible = false;
         controlCenterVisible = false;
+        themeMenuVisible = false;
         powerMenuVisible = !powerMenuVisible;
+    }
+
+    function toggleThemeMenu() {
+        launcherVisible = false;
+        controlCenterVisible = false;
+        powerMenuVisible = false;
+        themeMenuVisible = !themeMenuVisible;
     }
 
     function closeOverlays() {
         launcherVisible = false;
         controlCenterVisible = false;
         powerMenuVisible = false;
+        themeMenuVisible = false;
     }
 
     function showOsd(icon, label, value, detailText) {
@@ -139,6 +151,19 @@ ShellRoot {
 
         function closePowerMenu() {
             root.powerMenuVisible = false;
+        }
+
+        function toggleThemeMenu() {
+            root.toggleThemeMenu();
+        }
+
+        function openThemeMenu() {
+            root.closeOverlays();
+            root.themeMenuVisible = true;
+        }
+
+        function closeThemeMenu() {
+            root.themeMenuVisible = false;
         }
 
         function closeAll() {
@@ -340,6 +365,29 @@ ShellRoot {
             mediaTitle: mediaTitleProbe.text
             mediaArtist: mediaArtistProbe.text
             mediaStatus: mediaStatusProbe.text
+            onDismissed: root.closeOverlays()
+
+            colors: QtObject {
+                readonly property color bg: root.bg
+                readonly property color panel: root.panel
+                readonly property color panelAlt: root.panelAlt
+                readonly property color fg: root.fg
+                readonly property color muted: root.muted
+                readonly property color accent: root.accent
+                readonly property color danger: root.danger
+            }
+        }
+    }
+
+    Variants {
+        model: Quickshell.screens
+
+        ThemeMenu {
+            required property var modelData
+
+            screen: modelData
+            visible: root.themeMenuVisible
+            topOffset: root.barHeight + 10
             onDismissed: root.closeOverlays()
 
             colors: QtObject {
