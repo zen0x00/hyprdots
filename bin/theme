@@ -16,6 +16,10 @@ fi
 # Render all configs and run post_hooks (kitty SIGUSR1, hyprctl reload)
 matugen image "$WALLPAPER" --prefer less-saturation --mode dark
 
+# Apply GTK dark mode via gsettings (authoritative on Wayland, overrides settings.ini)
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
+gsettings set org.gnome.desktop.interface gtk-theme '' 2>/dev/null || true
+
 # Merge VSCode colors into settings.json
 VSCODE_SETTINGS="$HOME/.config/Code/User/settings.json"
 VSCODE_COLORS="$HOME/.config/Code/User/matugen-colors.json"
