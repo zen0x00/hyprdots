@@ -15,8 +15,12 @@ input_path  = '~/dotfiles/templates/Colors.qml'
 output_path = '~/dotfiles/quickshell/Colors.qml'
 
 [templates.gtk4]
-input_path  = '~/dotfiles/templates/gtk4.css'
+input_path  = '~/dotfiles/templates/gtk.css'
 output_path = '~/.config/gtk-4.0/gtk.css'
+
+[templates.gtk3]
+input_path  = '~/dotfiles/templates/gtk.css'
+output_path = '~/.config/gtk-3.0/gtk.css'
 
 [templates.fastfetch]
 input_path  = '~/dotfiles/templates/fastfetch-config.jsonc'
