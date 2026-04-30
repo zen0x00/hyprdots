@@ -16,7 +16,7 @@ selected=$(printf '%s\n' "${ENTRIES[@]}" \
     | rofi -dmenu -theme "$ROOT/rofi/powermenu.rasi" -p "")
 
 case "$selected" in
-    *Lock)      loginctl lock-session ;;
+    *Lock)      hyprlock ;;
     *Suspend)   systemctl suspend ;;
     *Hibernate) systemctl hibernate ;;
     *Reboot)    systemctl reboot ;;
