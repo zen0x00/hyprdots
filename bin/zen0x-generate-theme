@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import argparse
+import json
 import re
 import sys
 import tomllib
@@ -7,14 +8,16 @@ from pathlib import Path
 
 
 TEMPLATE_TARGETS = [
-    ("templates/kitty/colors.conf.tpl",      "~/.config/kitty/colors.conf"),
-    ("templates/hyprland/colors.conf.tpl",   "~/.config/hypr/colors.conf"),
-    ("templates/waybar/colors.css.tpl",      "~/.config/waybar/colors.css"),
-    ("templates/rofi/colors.rasi.tpl",       "~/.config/rofi/colors.rasi"),
-    ("templates/fastfetch/config.jsonc.tpl", "~/.config/fastfetch/config.jsonc"),
-    ("templates/swayosd/style.css.tpl",      "~/.config/swayosd/style.css"),
-    ("templates/swayosd/config.toml.tpl",    "~/.config/swayosd/config.toml"),
-    ("templates/swaync/colors.css.tpl",      "~/.config/swaync/colors.css"),
+    ("templates/kitty/colors.conf.tpl",        "~/.config/kitty/colors.conf"),
+    ("templates/hyprland/colors.conf.tpl",     "~/.config/hypr/colors.conf"),
+    ("templates/hyprland/hyprlock.conf.tpl",   "~/.config/hypr/hyprlock.conf"),
+    ("templates/waybar/colors.css.tpl",        "~/.config/waybar/colors.css"),
+    ("templates/rofi/colors.rasi.tpl",         "~/.config/rofi/colors.rasi"),
+    ("templates/fastfetch/config.jsonc.tpl",   "~/.config/fastfetch/config.jsonc"),
+    ("templates/swayosd/style.css.tpl",        "~/.config/swayosd/style.css"),
+    ("templates/swayosd/config.toml.tpl",      "~/.config/swayosd/config.toml"),
+    ("templates/swaync/colors.css.tpl",        "~/.config/swaync/colors.css"),
+    ("templates/opencode/theme.json.tpl",      "~/.config/opencode/themes/current.json"),
 ]
 
 
@@ -64,7 +67,9 @@ def load_theme(root: Path, theme: str) -> dict:
         return tomllib.load(file)
 
 
-def resolve_target_path(root: Path, target_name: str) -> Path:
+def resolve_target_path(root: Path, target_name: str, data: dict) -> Path:
+    target_name = re.sub(r"\{([^}]+)\}", lambda m: get_value(data, m.group(1)), target_name)
+
     if target_name.startswith("~/"):
         return Path(target_name).expanduser()
 
@@ -87,7 +92,7 @@ def main() -> int:
 
     for template_name, target_name in TEMPLATE_TARGETS:
         template_path = root / template_name
-        target_path = resolve_target_path(root, target_name)
+        target_path = resolve_target_path(root, target_name, data)
         content = render(template_path.read_text(), data)
         rendered.append((template_path, target_path, content))
 
@@ -97,6 +102,13 @@ def main() -> int:
             continue
         target_path.parent.mkdir(parents=True, exist_ok=True)
         target_path.write_text(content)
+
+    if not args.dry_run:
+        tui_path = Path("~/.config/opencode/tui.json").expanduser()
+        tui_path.parent.mkdir(parents=True, exist_ok=True)
+        tui = json.loads(tui_path.read_text()) if tui_path.exists() else {}
+        tui["theme"] = "current"
+        tui_path.write_text(json.dumps(tui, indent=2) + "\n")
 
     print(f"Generated theme: {data['meta']['name']} ({data['meta']['slug']})")
     return 0

@@ -25,10 +25,23 @@ command -v swaync-client >/dev/null 2>&1 && swaync-client --reload-css 2>/dev/nu
 
 command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
 
+ROOT="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/.." && pwd)"
+command -v jq >/dev/null 2>&1 && "$ROOT/bin/zen0x-theme-set-vscode" 2>/dev/null || true
+
+if [[ -f "$ROOT/.current-theme" ]]; then
+    wallpaper="$ROOT/themes/$(cat "$ROOT/.current-theme")/wallpaper.jpg"
+    if [[ -f $wallpaper ]]; then
+        ln -sf "$wallpaper" "$HOME/.config/hypr/wallpaper.jpg"
+        command -v awww >/dev/null 2>&1 && awww img "$wallpaper" --transition-type any --transition-fps 60 2>/dev/null || true
+    fi
+fi
+
+command -v pkill >/dev/null 2>&1 && pkill -HUP hyprlock 2>/dev/null || true
+  
 if [ "$status" -eq 0 ]; then
-    echo "Reloaded: Hyprland, Kitty, Waybar, SwayNC, SwayOSD."
+    notify-send "zen0x" "Reloaded: Hyprland, Kitty, Waybar, SwayNC, SwayOSD, VSCode."
 else
-    echo "Theme files generated, but one or more reload steps failed." >&2
+    notify-send -u critical "zen0x" "Theme files generated, but one or more reload steps failed."
 fi
 
 exit "$status"

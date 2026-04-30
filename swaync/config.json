@@ -8,8 +8,8 @@
   "control-center-margin-bottom": 8,
   "control-center-margin-right": 8,
   "control-center-margin-left": 0,
-  "control-center-width": 360,
-  "control-center-height": 620,
+  "control-center-width": 400,
+  "control-center-height": 680,
   "notification-window-width": 360,
   "fit-to-screen": false,
   "relative-timestamps": true,
@@ -23,6 +23,7 @@
     "dnd",
     "volume",
     "backlight",
+    "buttons-grid",
     "mpris",
     "notifications"
   ],
@@ -45,6 +46,27 @@
     "mpris": {
       "image-size": 56,
       "image-radius": 12
+    },
+    "buttons-grid": {
+      "buttons-per-row": 2,
+      "actions": [
+        {
+          "label": "󰤨\nWi-Fi",
+          "command": "/home/aman/dotfiles/bin/zen0x-toggle-wifi"
+        },
+        {
+          "label": "󰂯\nBluetooth",
+          "command": "/home/aman/dotfiles/bin/zen0x-toggle-bluetooth"
+        },
+        {
+          "label": "󰝟\nMute",
+          "command": "/home/aman/dotfiles/bin/zen0x-toggle-mute"
+        },
+        {
+          "label": "󰂚\nDo Not Disturb",
+          "command": "swaync-client -d"
+        }
+      ]
     }
   }
 }

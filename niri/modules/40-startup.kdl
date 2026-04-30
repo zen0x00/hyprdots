@@ -1,0 +1,8 @@
+spawn-at-startup "waybar"
+spawn-at-startup "swayosd-server" "--config" "/home/aman/.config/swayosd/config.toml"
+spawn-sh-at-startup "wl-paste --type text --watch cliphist store"
+spawn-sh-at-startup "wl-paste --type image --watch cliphist store"
+
+hotkey-overlay {
+    skip-at-startup
+}

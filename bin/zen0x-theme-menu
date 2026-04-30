@@ -20,15 +20,23 @@ get_current_theme() {
 }
 
 show_menu() {
-    local themes
+    local themes current
     themes=$(get_themes)
+    current=$(get_current_theme)
 
     if [ -z "$themes" ]; then
         echo "No themes found in $THEMES_DIR" >&2
         exit 1
     fi
 
-    echo "$themes" | rofi -dmenu -i -p "Select theme" -theme "$ROOT/rofi/theme-menu.rasi"
+    while IFS= read -r theme; do
+        if [ "$theme" = "$current" ]; then
+            echo "✓  $theme"
+        else
+            echo "   $theme"
+        fi
+    done <<< "$themes" \
+        | rofi -dmenu -theme "$ROOT/rofi/theme-menu.rasi"
 }
 
 main() {
@@ -36,9 +44,12 @@ main() {
     selected=$(show_menu)
 
     if [ -z "$selected" ]; then
-        echo "No theme selected." >&2
         exit 0
     fi
+
+    # Strip leading marker (✓  or leading spaces)
+    selected="${selected#✓  }"
+    selected="$(printf '%s' "$selected" | sed 's/^[[:space:]]*//')"
 
     echo "$selected" > "$ROOT/.current-theme"
     "$ROOT/bin/zen0x-apply-theme" "$selected"

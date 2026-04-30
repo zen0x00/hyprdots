@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/.." && pwd)"
+
+CURRENT_THEME_FILE="$ROOT/.current-theme"
+
+if [[ ! -f $CURRENT_THEME_FILE ]]; then
+  echo "No current theme set. Run zen0x-theme-menu first." >&2
+  exit 1
+fi
+
+THEME_SLUG="$(cat "$CURRENT_THEME_FILE")"
+VS_CODE_THEME="$ROOT/themes/$THEME_SLUG/vscode.json"
+
+set_theme() {
+  local editor_cmd="$1"
+  local settings_path="$2"
+
+  command -v "$editor_cmd" >/dev/null 2>&1 || return 0
+
+  if [[ -f $VS_CODE_THEME ]]; then
+    theme_name=$(jq -r '.name' "$VS_CODE_THEME")
+    extension=$(jq -r '.extension // empty' "$VS_CODE_THEME")
+
+    if [[ -n $extension ]] && ! "$editor_cmd" --list-extensions | grep -Fxq "$extension"; then
+      "$editor_cmd" --install-extension "$extension" >/dev/null
+    fi
+
+    mkdir -p "$(dirname "$settings_path")"
+    [[ -f $settings_path ]] || printf '{\n}\n' >"$settings_path"
+
+    if ! grep -q '"workbench.colorTheme"' "$settings_path"; then
+      sed -i --follow-symlinks -E '0,/\{/{s/\{/{\n  "workbench.colorTheme": "",/}' "$settings_path"
+    fi
+
+    sed -i --follow-symlinks -E \
+      "s/(\"workbench.colorTheme\"[[:space:]]*:[[:space:]]*\")[^\"]*(\")/\1$theme_name\2/" \
+      "$settings_path"
+  elif [[ -f $settings_path ]]; then
+    sed -i --follow-symlinks -E 's/\"workbench\.colorTheme\"[[:space:]]*:[^,}]*,?//' "$settings_path"
+  fi
+}
+
+set_theme "code"         "$HOME/.config/Code/User/settings.json"
+set_theme "code-insiders" "$HOME/.config/Code - Insiders/User/settings.json"
+set_theme "codium"       "$HOME/.config/VSCodium/User/settings.json"
+set_theme "cursor"       "$HOME/.config/Cursor/User/settings.json"

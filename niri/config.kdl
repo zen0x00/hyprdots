@@ -1,0 +1,12 @@
+// Modular niri config — https://niri-wm.github.io/niri/Configuration:-Introduction
+// KDL format: https://kdl.dev
+
+include "~/.config/niri/modules/10-input.kdl"
+include "~/.config/niri/modules/20-output.kdl"
+include "~/.config/niri/modules/30-layout.kdl"
+include "~/.config/niri/modules/40-startup.kdl"
+include "~/.config/niri/modules/50-animations.kdl"
+include "~/.config/niri/modules/60-window-rules.kdl"
+include "~/.config/niri/modules/70-binds.kdl"
+
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+state=$(bluetoothctl show | awk '/Powered:/{print $2}')
+if [ "$state" = "yes" ]; then
+  bluetoothctl power off
+else
+  bluetoothctl power on
+fi

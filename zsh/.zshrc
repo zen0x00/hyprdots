@@ -168,6 +168,7 @@ alias cp='cp -iv'
 alias mv='mv -iv'
 alias rm='rm -I'
 alias grep='grep --color=auto'
+alias vim='nvim'
 
 # Aliases: Git
 alias gs='git status --short'
@@ -179,6 +180,8 @@ alias gd='git diff'
 alias gco='git checkout'
 alias gb='git branch'
 alias gl='git log --oneline --graph --decorate --all'
+
+
 
 # Extract archives
 extract() {
