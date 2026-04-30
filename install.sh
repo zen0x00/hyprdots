@@ -57,6 +57,7 @@ AUR_PACKAGES=(
     zen-browser-bin
     awww-git
     ly
+    openrgb
 )
 
 step "AUR helper"
