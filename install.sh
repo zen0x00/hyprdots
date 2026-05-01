@@ -121,6 +121,9 @@ info "bin → /usr/bin"
 sudo stow --dir="$DOTFILES_DIR" --target=/usr --stow bin
 
 info "zsh → $HOME"
+for f in .zshrc .zshenv .zprofile; do
+    [[ -f "$HOME/$f" && ! -L "$HOME/$f" ]] && mv "$HOME/$f" "$HOME/$f.bak.$(date +%s)" && warn "Backed up $f"
+done
 stow --dir="$DOTFILES_DIR" --target="$HOME" --stow zsh
 
 CONFIG_PACKAGES=(fastfetch hypr kitty rofi swayosd swaync waybar)
