@@ -37,9 +37,14 @@ if [[ -f "$ROOT/.current-theme" ]]; then
 fi
 
 command -v pkill >/dev/null 2>&1 && pkill -HUP hyprlock 2>/dev/null || true
-  
+
+for _sock in /run/user/$(id -u)/nvim.*.0; do
+    [[ -S "$_sock" ]] && nvim --server "$_sock" --remote-send ':colorscheme zen0x<CR>' 2>/dev/null || true
+done
+unset _sock
+
 if [ "$status" -eq 0 ]; then
-    notify-send "zen0x" "Reloaded: Hyprland, Kitty, Waybar, SwayNC, SwayOSD, VSCode."
+    notify-send "zen0x" "Reloaded: Hyprland, Kitty, Waybar, SwayNC, SwayOSD, VSCode, Nvim."
 else
     notify-send -u critical "zen0x" "Theme files generated, but one or more reload steps failed."
 fi
