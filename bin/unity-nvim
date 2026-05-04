@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Called by Unity as: unity-nvim /path/to/File.cs <line> <column>
+# Opens file at line in a running kitty window or a new one.
+
+FILE="${1:-}"
+LINE="${2:-1}"
+
+if [[ -z "$FILE" ]]; then
+  exec nvim
+fi
+
+exec nvim +"$LINE" "$FILE"
