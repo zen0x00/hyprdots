@@ -1,11 +1,9 @@
 return {
-  -- Disable OmniSharp that lang.cs extra enables by default
+  -- Treesitter: C# grammar
   {
-    "neovim/nvim-lspconfig",
+    "nvim-treesitter/nvim-treesitter",
     opts = {
-      servers = {
-        omnisharp = { enabled = false },
-      },
+      ensure_installed = { "c_sharp" },
     },
   },
 
