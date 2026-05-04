@@ -29,7 +29,7 @@ PACMAN_PACKAGES=(
     zsh fzf zoxide starship eza fastfetch
 
     # Wayland / WM
-    hyprland uwsm hypridle hyprlock hyprpaper hyprpolkitagent
+    hyprland uwsm hypridle hyprlock hyprpaper hyprpolkitagent hyprcursor
 
     # Status bar / notifications / OSD
     waybar swaync swayosd

@@ -1,4 +1,4 @@
-[[ -o interactive ]] && fastfetch
+[[ -o interactive ]] && pfetch
 
 # ------------------------------------------------------------
 # Zsh: fast, fuzzy, and a little bit pretty.
