@@ -1,3 +1,4 @@
+package.loaded["zen0x.colors"] = nil
 local ok, colors = pcall(require, "zen0x.colors")
 if not ok then
   vim.notify("zen0x: run zen0x-apply-theme first", vim.log.levels.WARN)
