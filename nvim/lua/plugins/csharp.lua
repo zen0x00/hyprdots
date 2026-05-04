@@ -12,14 +12,14 @@ return {
     "williamboman/mason.nvim",
     opts = {
       ensure_installed = {
+        "roslyn",
         "netcoredbg",
         "csharpier",
       },
     },
   },
 
-  -- Roslyn LSP (replaces OmniSharp)
-  -- Run :RoslynInstall inside nvim once after install to download the server binary
+  -- Roslyn LSP (replaces OmniSharp) — server installed via Mason
   {
     "seblj/roslyn.nvim",
     ft = "cs",
