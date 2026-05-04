@@ -66,7 +66,7 @@ return {
   {
     "rcarriga/nvim-dap-ui",
     dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
-    ft = "cs",
+    lazy = true,
     config = function()
       local dap = require("dap")
       local dapui = require("dapui")
@@ -89,14 +89,22 @@ return {
   {
     "theHamsta/nvim-dap-virtual-text",
     dependencies = { "mfussenegger/nvim-dap" },
-    ft = "cs",
+    lazy = true,
     opts = {},
   },
 
   -- DAP: netcoredbg adapter + Unity attach config + keymaps
   {
     "mfussenegger/nvim-dap",
-    ft = "cs",
+    dependencies = { "rcarriga/nvim-dap-ui", "theHamsta/nvim-dap-virtual-text" },
+    keys = {
+      { "<F5>",        function() require("dap").continue() end,         desc = "DAP Continue" },
+      { "<F9>",        function() require("dap").toggle_breakpoint() end, desc = "DAP Toggle Breakpoint" },
+      { "<F10>",       function() require("dap").step_over() end,        desc = "DAP Step Over" },
+      { "<F11>",       function() require("dap").step_into() end,        desc = "DAP Step Into" },
+      { "<F12>",       function() require("dap").step_out() end,         desc = "DAP Step Out" },
+      { "<leader>du",  function() require("dapui").toggle() end,         desc = "DAP UI Toggle" },
+    },
     config = function()
       local dap = require("dap")
 
@@ -114,13 +122,6 @@ return {
           processId = require("dap.utils").pick_process,
         },
       }
-
-      vim.keymap.set("n", "<F5>",        dap.continue,          { desc = "DAP Continue" })
-      vim.keymap.set("n", "<F9>",        dap.toggle_breakpoint, { desc = "DAP Toggle Breakpoint" })
-      vim.keymap.set("n", "<F10>",       dap.step_over,         { desc = "DAP Step Over" })
-      vim.keymap.set("n", "<F11>",       dap.step_into,         { desc = "DAP Step Into" })
-      vim.keymap.set("n", "<F12>",       dap.step_out,          { desc = "DAP Step Out" })
-      vim.keymap.set("n", "<leader>du",  function() require("dapui").toggle() end, { desc = "DAP UI Toggle" })
     end,
   },
 }
