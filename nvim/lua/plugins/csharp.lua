@@ -10,16 +10,13 @@ return {
   -- Mason: netcoredbg (DAP adapter) + csharpier (formatter)
   {
     "mason-org/mason.nvim",
-    opts = {
-      ensure_installed = {
-        "roslyn",
-        "netcoredbg",
-        "csharpier",
-      },
-    },
+    opts = function(_, opts)
+      opts.ensure_installed = opts.ensure_installed or {}
+      vim.list_extend(opts.ensure_installed, { "netcoredbg", "csharpier" })
+    end,
   },
 
-  -- Roslyn LSP (replaces OmniSharp) — server installed via Mason
+  -- Roslyn LSP — binary managed by the plugin itself
   {
     "seblj/roslyn.nvim",
     ft = "cs",
