@@ -9,7 +9,7 @@ return {
 
   -- Mason: netcoredbg (DAP adapter) + csharpier (formatter)
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
       ensure_installed = {
         "roslyn",
