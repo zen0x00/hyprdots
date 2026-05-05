@@ -1,4 +1,12 @@
 return {
+  -- Disable inlay hints globally (roslyn sends invalid columns → extmark error)
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      inlay_hints = { enabled = false },
+    },
+  },
+
   -- Treesitter: C# grammar
   {
     "nvim-treesitter/nvim-treesitter",
