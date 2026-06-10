@@ -14,7 +14,7 @@
 window#waybar {
   background: alpha(@panelAlt, 0.88);
   border: 1px solid alpha(@accent, 0.45);
-  border-radius: 21px;
+  border-radius: 14px;
   color: @fg;
 }
 
@@ -77,14 +77,14 @@ window#waybar {
   color: @fg;
   font-size: 12px;
   padding: 0 8px;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 #network {
   color: @fg;
   font-size: 12px;
   padding: 0 8px;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 /* ── Battery ────────────────────────────────────────────── */
@@ -93,7 +93,7 @@ window#waybar {
   color: @fg;
   font-size: 14px;
   padding: 0 6px;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 #battery.warning {
@@ -116,7 +116,7 @@ window#waybar {
   font-size: 12px;
   font-weight: 700;
   padding: 0 8px;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 /* ── Tray ───────────────────────────────────────────────── */
@@ -163,6 +163,6 @@ window#waybar {
   font-family: "Symbols Nerd Font Mono";
   font-size: 14px;
   padding: 0 6px;
-  border-radius: 12px;
+  border-radius: 14px;
   min-width: 24px;
 }
