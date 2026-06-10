@@ -5,7 +5,8 @@ set -euo pipefail
 # Full system setup: packages → dotfiles → stow → theme → shell
 # Target: Arch / CachyOS
 
-DOTFILES_DIR="${DOTFILES_DIR:-$HOME/dotfiles}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="${DOTFILES_DIR:-$SCRIPT_DIR}"
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/zen0x00/dotfiles.git}"
 DEFAULT_THEME="gruvbox"
 
@@ -116,25 +117,7 @@ fi
 # ── stow ───────────────────────────────────────────────────────────────────────
 step "Stow configs"
 cd "$DOTFILES_DIR"
-
-info "bin → /usr/bin"
-sudo stow --dir="$DOTFILES_DIR" --target=/usr --stow bin
-
-info "zsh → $HOME"
-for f in .zshrc .zshenv .zprofile; do
-    [[ -f "$HOME/$f" && ! -L "$HOME/$f" ]] && mv "$HOME/$f" "$HOME/$f.bak.$(date +%s)" && warn "Backed up $f"
-done
-stow --dir="$DOTFILES_DIR" --target="$HOME" --stow zsh
-
-CONFIG_PACKAGES=(fastfetch hypr kitty rofi swayosd swaync waybar)
-for pkg in "${CONFIG_PACKAGES[@]}"; do
-    if [[ -d "$DOTFILES_DIR/$pkg" ]]; then
-        info "$pkg → ~/.config/$pkg"
-        mkdir -p "$HOME/.config/$pkg"
-        stow --dir="$DOTFILES_DIR" --target="$HOME/.config/$pkg" --stow "$pkg"
-    fi
-done
-
+"$DOTFILES_DIR/modules/stow.sh"
 success "Stow done"
 
 # ── theme ──────────────────────────────────────────────────────────────────────
