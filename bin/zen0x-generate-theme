@@ -10,6 +10,7 @@ from pathlib import Path
 TEMPLATE_TARGETS = [
     ("templates/kitty/colors.conf.tpl",        "~/.config/kitty/colors.conf"),
     ("templates/hyprland/colors.conf.tpl",     "~/.config/hypr/colors.conf"),
+    ("templates/hyprland/colors.lua.tpl",      "~/.config/hypr/colors.lua"),
     ("templates/hyprland/hyprlock.conf.tpl",   "~/.config/hypr/hyprlock.conf"),
     ("templates/waybar/colors.css.tpl",        "~/.config/waybar/colors.css"),
     ("templates/rofi/colors.rasi.tpl",         "~/.config/rofi/colors.rasi"),
@@ -89,6 +90,7 @@ def main() -> int:
 
     root = repo_root()
     data = load_theme(root, args.theme)
+    data["env"] = {"home": str(Path.home())}
     rendered = []
 
     for template_name, target_name in TEMPLATE_TARGETS:

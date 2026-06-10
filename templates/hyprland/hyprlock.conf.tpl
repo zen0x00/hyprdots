@@ -9,7 +9,7 @@ general {
 
 background {
     monitor =
-    path = ~/.config/hypr/wallpaper.jpg
+    path = {{ env.home }}/.config/hypr/wallpaper.jpg
     blur_size = 8
     blur_passes = 4
     brightness = 0.60

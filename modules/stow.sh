@@ -9,7 +9,7 @@ sudo stow --dir="$DOTFILES_DIR" --target=/usr --stow bin
 echo "Stowing zsh → $HOME ..."
 stow --dir="$DOTFILES_DIR" --target="$HOME" --stow zsh
 
-CONFIG_PACKAGES=(fastfetch hypr kitty quickshell rofi swayosd swaync waybar)
+CONFIG_PACKAGES=(fastfetch hypr kitty rofi swayosd swaync waybar)
 
 for pkg in "${CONFIG_PACKAGES[@]}"; do
     echo "Stowing $pkg → ~/.config/$pkg ..."

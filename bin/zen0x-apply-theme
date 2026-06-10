@@ -10,5 +10,8 @@ if [ "$#" -ne 1 ]; then
     exit 2
 fi
 
-"$ROOT/bin/zen0x-generate-theme" "$1"
+THEME="$1"
+
+"$ROOT/bin/zen0x-generate-theme" "$THEME"
+printf '%s\n' "$THEME" > "$ROOT/.current-theme"
 "$ROOT/bin/zen0x-theme-reload"

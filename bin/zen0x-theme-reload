@@ -31,8 +31,10 @@ command -v jq >/dev/null 2>&1 && "$ROOT/bin/zen0x-theme-set-vscode" 2>/dev/null 
 if [[ -f "$ROOT/.current-theme" ]]; then
     wallpaper="$ROOT/themes/$(cat "$ROOT/.current-theme")/wallpaper.jpg"
     if [[ -f $wallpaper ]]; then
-        ln -sf "$wallpaper" "$HOME/.config/hypr/wallpaper.jpg"
-        command -v awww >/dev/null 2>&1 && awww img "$wallpaper" --transition-type any --transition-fps 60 2>/dev/null || true
+        wallpaper_target="$HOME/.config/hypr/wallpaper.jpg"
+        mkdir -p "$(dirname "$wallpaper_target")"
+        cp "$wallpaper" "$wallpaper_target"
+        command -v awww >/dev/null 2>&1 && awww img -a "$wallpaper_target" --transition-type any --transition-fps 60 2>/dev/null || true
     fi
 fi
 

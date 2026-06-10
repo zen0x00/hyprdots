@@ -208,3 +208,7 @@ extract() {
     *)         echo "Cannot extract: $1" ;;
   esac
 }
+
+# >>> Codex installer >>>
+export PATH="/home/zen0x/.local/bin:$PATH"
+# <<< Codex installer <<<

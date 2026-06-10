@@ -1,0 +1,10 @@
+-- Permission changes require a Hyprland restart and are not applied on-the-fly.
+-- hl.config({
+--     ecosystem = {
+--         enforce_permissions = 1,
+--     },
+-- })
+--
+-- hl.permission({ path = "/usr/(bin|local/bin)/grim", permission = "screencopy", value = "allow" })
+-- hl.permission({ path = "/usr/(lib|libexec|lib64)/xdg-desktop-portal-hyprland", permission = "screencopy", value = "allow" })
+-- hl.permission({ path = "/usr/(bin|local/bin)/hyprpm", permission = "plugin", value = "allow" })
