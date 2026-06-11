@@ -41,19 +41,20 @@ end
 hl.bind(mainMod .. " + S", function() hl.exec_cmd("hyprctl dispatch togglespecialworkspace magic") end)
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 
+hl.bind("SUPER + LEFT", hl.dsp.focus({ direction = "l" }))
+hl.bind("SUPER + RIGHT", hl.dsp.focus({ direction = "r" }))
+hl.bind("SUPER + UP", hl.dsp.focus({ direction = "u" }))
+hl.bind("SUPER + DOWN", hl.dsp.focus({ direction = "d" }))
+
+hl.bind("SUPER + SHIFT + LEFT", hl.dsp.window.swap({ direction = "l" }))
+hl.bind("SUPER + SHIFT + RIGHT", hl.dsp.window.swap({ direction = "r" }))
+hl.bind("SUPER + SHIFT + UP", hl.dsp.window.swap({ direction = "u" }))
+hl.bind("SUPER + SHIFT + DOWN", hl.dsp.window.swap({ direction = "d" }))
+
 hl.bind(mainMod .. " + V", function() hl.exec_cmd("hyprctl dispatch togglefloating") end)
 hl.bind(mainMod .. " + P", function() hl.exec_cmd("hyprctl dispatch pseudo") end)
 hl.bind(mainMod .. " + G", function() hl.exec_cmd("hyprctl dispatch togglegroup") end)
 hl.bind(mainMod .. " + Tab", function() hl.exec_cmd("hyprctl dispatch changegroupactive f") end)
-
-hl.bind(mainMod .. " + CTRL + Right", function() hl.exec_cmd("hyprctl dispatch resizeactive 30 0") end, { repeating = true })
-hl.bind(mainMod .. " + CTRL + Left", function() hl.exec_cmd("hyprctl dispatch resizeactive -30 0") end, { repeating = true })
-hl.bind(mainMod .. " + CTRL + Up", function() hl.exec_cmd("hyprctl dispatch resizeactive 0 -30") end, { repeating = true })
-hl.bind(mainMod .. " + CTRL + Down", function() hl.exec_cmd("hyprctl dispatch resizeactive 0 30") end, { repeating = true })
-hl.bind(mainMod .. " + CTRL + L", function() hl.exec_cmd("hyprctl dispatch resizeactive 30 0") end, { repeating = true })
-hl.bind(mainMod .. " + CTRL + H", function() hl.exec_cmd("hyprctl dispatch resizeactive -30 0") end, { repeating = true })
-hl.bind(mainMod .. " + CTRL + K", function() hl.exec_cmd("hyprctl dispatch resizeactive 0 -30") end, { repeating = true })
-hl.bind(mainMod .. " + CTRL + J", function() hl.exec_cmd("hyprctl dispatch resizeactive 0 30") end, { repeating = true })
 
 hl.bind("Print", hl.dsp.exec_cmd("hyprshot -m region | satty --filename -"))
 hl.bind(mainMod .. " + mouse_down", function() hl.exec_cmd("hyprctl dispatch workspace e+1") end)

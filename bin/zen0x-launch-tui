@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# zen0x:summary=Launch a TUI command in the default terminal with Zen0x styling
+# zen0x:args=<command> [args...]
+
+exec setsid uwsm-app -- xdg-terminal-exec --app-id=org.zen0x.$(basename $1) -e "$1" "${@:2}"

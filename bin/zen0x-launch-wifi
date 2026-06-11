@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# zen0x:summary=Launch the Zen0x wifi controls (provided by the Impala TUI).
+
+rfkill unblock wifi
+zen0x-launch-or-focus-tui impala

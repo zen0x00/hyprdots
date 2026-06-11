@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# zen0x:summary=Launch the Zen0x audio controls TUI (provided by wiremix).
+
+zen0x-launch-or-focus-tui wiremix

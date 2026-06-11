@@ -110,11 +110,18 @@ prepare_conflicts() {
             continue
         fi
 
+        local resolved_existing expected_target
+        resolved_existing="$(realpath -m "$target_path")"
+        expected_target="$(realpath -m "$source_path")"
+
+        if [[ "$resolved_existing" == "$expected_target" ]]; then
+            continue
+        fi
+
         if path_is_symlink "$use_sudo" "$target_path"; then
-            local link_target resolved_target expected_target
+            local link_target resolved_target
             link_target="$(read_symlink "$use_sudo" "$target_path")"
             resolved_target="$(realpath -m "$(dirname "$target_path")/$link_target")"
-            expected_target="$(realpath -m "$source_path")"
 
             if [[ "$resolved_target" == "$expected_target" ]]; then
                 continue

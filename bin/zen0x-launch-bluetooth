@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# zen0x:summary=Launch the Zen0x bluetooth controls TUI (provided by bluetui).
+
+rfkill unblock bluetooth
+exec zen0x-launch-or-focus-tui bluetui

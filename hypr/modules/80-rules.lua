@@ -89,13 +89,29 @@ hl.window_rule({
     rounding = 0,
 })
 
-hl.window_rule({ match = { class = "steam" }, float = true })
-hl.window_rule({ match = { class = "steam", title = "Steam" }, center = true })
-hl.window_rule({ match = { class = "steam.*" }, tag = "-default-opacity" })
-hl.window_rule({ match = { class = "steam.*" }, opacity = "1 1" })
-hl.window_rule({ match = { class = "steam", title = "Steam" }, size = { 1400, 800 } })
-hl.window_rule({ match = { class = "steam", title = "Friends List" }, size = { 460, 800 } })
-hl.window_rule({ match = { class = "steam" }, idle_inhibit = "fullscreen" })
+local steam_class = "^(steam|Steam|steamwebhelper)$"
+
+hl.window_rule({
+    name = "steam-floating",
+    match = { class = steam_class },
+    float = true,
+    center = true,
+    tag = "-default-opacity",
+    opacity = "1 1",
+    idle_inhibit = "fullscreen",
+})
+
+hl.window_rule({
+    name = "steam-main-size",
+    match = { class = steam_class, title = "^Steam$" },
+    size = { 1400, 800 },
+})
+
+hl.window_rule({
+    name = "steam-friends-size",
+    match = { class = steam_class, title = "^Friends List$" },
+    size = { 460, 800 },
+})
 
 hl.layer_rule({ name = "no-anim-selection", match = { namespace = "selection" }, no_anim = true })
 
