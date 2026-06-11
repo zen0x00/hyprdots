@@ -38,6 +38,9 @@ for i = 1, 10 do
     hl.bind(mainMod .. " + SHIFT + " .. key,     hl.dsp.window.move({ workspace = i }))
 end
 
+hl.bind(mainMod .. " + S", function() hl.exec_cmd("hyprctl dispatch togglespecialworkspace magic") end)
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+
 hl.bind(mainMod .. " + V", function() hl.exec_cmd("hyprctl dispatch togglefloating") end)
 hl.bind(mainMod .. " + P", function() hl.exec_cmd("hyprctl dispatch pseudo") end)
 hl.bind(mainMod .. " + G", function() hl.exec_cmd("hyprctl dispatch togglegroup") end)
@@ -52,7 +55,7 @@ hl.bind(mainMod .. " + CTRL + H", function() hl.exec_cmd("hyprctl dispatch resiz
 hl.bind(mainMod .. " + CTRL + K", function() hl.exec_cmd("hyprctl dispatch resizeactive 0 -30") end, { repeating = true })
 hl.bind(mainMod .. " + CTRL + J", function() hl.exec_cmd("hyprctl dispatch resizeactive 0 30") end, { repeating = true })
 
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("hyprshot -m region | satty --filename -"))
+hl.bind("Print", hl.dsp.exec_cmd("hyprshot -m region | satty --filename -"))
 hl.bind(mainMod .. " + mouse_down", function() hl.exec_cmd("hyprctl dispatch workspace e+1") end)
 hl.bind(mainMod .. " + mouse_up", function() hl.exec_cmd("hyprctl dispatch workspace e-1") end)
 
