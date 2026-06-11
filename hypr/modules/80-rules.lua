@@ -90,7 +90,7 @@ hl.window_rule({
 })
 
 local steam_class = "^(steam|Steam|steamwebhelper)$"
-local unityhub_class = "^(unityhub|Unity Hub)$"
+local unityhub_class = "^(unityhub-bin|Unity Hub)$"
 local unity_editor_popup_title = "^(?!.* - Unity( .*)?$).+"
 
 hl.window_rule({
@@ -159,6 +159,14 @@ hl.window_rule({
 hl.window_rule({
     name = "float-zen0x-utility-tuis",
     match = { class = "^(org.zen0x.wiremix|org.zen0x.impala|org.zen0x.bluetui)$", fullscreen = false },
+    float = true,
+    center = true,
+    size = { 1100, 700 },
+})
+
+hl.window_rule({
+    name = "float-terminal-launcher",
+    match = { class = "^(org.zen0x.floating-terminal)$", fullscreen = false },
     float = true,
     center = true,
     size = { 1100, 700 },

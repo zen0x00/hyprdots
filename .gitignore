@@ -11,3 +11,4 @@ swayosd/style.css
 swayosd/config.toml
 swaync/colors.css
 hypr/colors.lua
+hypr/modules/00-monitors.lua

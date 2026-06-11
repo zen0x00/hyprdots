@@ -3,6 +3,7 @@ local programs = require("modules/01-programs")
 local mainMod = "SUPER"
 
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(programs.terminal))
+hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd("xdg-terminal-exec --app-id=org.zen0x.floating-terminal"))
 hl.bind(mainMod .. "+ W", hl.dsp.window.close())
 hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || uwsm stop"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(programs.file_manager))

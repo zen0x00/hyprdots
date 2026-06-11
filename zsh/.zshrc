@@ -5,6 +5,7 @@
 # ------------------------------------------------------------
 
 [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zen0x/defaults.sh" ]] && source "${XDG_CONFIG_HOME:-$HOME/.config}/zen0x/defaults.sh"
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zen0x/fzf-theme.zsh" ]] && source "${XDG_CONFIG_HOME:-$HOME/.config}/zen0x/fzf-theme.zsh"
 
 export EDITOR="${EDITOR:-micro}"
 export VISUAL="${VISUAL:-$EDITOR}"
@@ -104,11 +105,7 @@ if [[ -t 0 ]] && command -v fzf >/dev/null 2>&1; then
     --prompt='  '
     --pointer=''
     --marker=''
-    --color=fg:#D3C6AA,bg:#2B3339,hl:#7FBBB3
-    --color=fg+:#D3C6AA,bg+:#323C41,hl+:#7FBBB3
-    --color=border:#7FBBB3,gutter:#2B3339,header:#83C092
-    --color=info:#83C092,prompt:#DBBC7F,pointer:#E67E80
-    --color=marker:#A7C080,spinner:#7FBBB3
+    ${ZEN0X_FZF_COLOR_OPTS:-}
   "
 
   if [[ -r /usr/share/fzf/key-bindings.zsh ]]; then
