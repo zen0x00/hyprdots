@@ -2,6 +2,34 @@
 set -u
 
 status=0
+ROOT="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/.." && pwd)"
+
+read_theme_value() {
+    local file_path="$1"
+
+    [[ -f "$file_path" ]] || return 1
+
+    awk '
+        /^[[:space:]]*(#|;|$)/ { next }
+        { print; exit }
+    ' "$file_path"
+}
+
+get_gtk_theme_name() {
+    local current_theme theme_dir vscode_file theme_name
+
+    [[ -f "$ROOT/.current-theme" ]] || return 1
+    current_theme="$(<"$ROOT/.current-theme")"
+    theme_dir="$ROOT/themes/$current_theme"
+    vscode_file="$theme_dir/vscode.json"
+
+    [[ -f "$vscode_file" ]] || return 1
+
+    theme_name="$(sed -n 's/^[[:space:]]*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$vscode_file" | head -n1)"
+    [[ -n "$theme_name" ]] || return 1
+
+    printf '%s\n' "$theme_name"
+}
 
 if command -v hyprctl >/dev/null 2>&1; then
     if ! hyprctl reload; then
@@ -23,10 +51,27 @@ command -v swayosd-server >/dev/null 2>&1 && swayosd-server &>/dev/null &
 
 command -v swaync-client >/dev/null 2>&1 && swaync-client --reload-css 2>/dev/null || true
 
-command -v gsettings >/dev/null 2>&1 && gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
+if command -v gsettings >/dev/null 2>&1; then
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
 
-ROOT="$(cd -- "$(dirname -- "$(readlink -f -- "$0")")/.." && pwd)"
-command -v jq >/dev/null 2>&1 && "$ROOT/bin/zen0x-theme-set-vscode" 2>/dev/null || true
+    if gtk_theme="$(get_gtk_theme_name)"; then
+        gsettings set org.gnome.desktop.interface gtk-theme "$gtk_theme" 2>/dev/null || true
+    fi
+
+    if [[ -f "$ROOT/.current-theme" ]]; then
+        icon_theme_file="$ROOT/themes/$(<"$ROOT/.current-theme")/icon.theme"
+        if icon_theme="$(read_theme_value "$icon_theme_file")"; then
+            gsettings set org.gnome.desktop.interface icon-theme "$icon_theme" 2>/dev/null || true
+        fi
+    fi
+fi
+
+if command -v jq >/dev/null 2>&1; then
+    if ! "$ROOT/bin/zen0x-theme-set-vscode"; then
+        echo "Warning: VS Code theme sync failed." >&2
+        status=1
+    fi
+fi
 
 if [[ -f "$ROOT/.current-theme" ]]; then
     wallpaper="$ROOT/themes/$(cat "$ROOT/.current-theme")/wallpaper.jpg"
@@ -46,7 +91,7 @@ done
 unset _sock
 
 if [ "$status" -eq 0 ]; then
-    notify-send "zen0x" "Reloaded: Hyprland, Kitty, Waybar, SwayNC, SwayOSD, VSCode, Nvim."
+    notify-send "zen0x" "Reloaded theme files and synced VS Code settings."
 else
     notify-send -u critical "zen0x" "Theme files generated, but one or more reload steps failed."
 fi

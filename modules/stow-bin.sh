@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
-BIN_TARGET="${BIN_TARGET:-/usr}"
+BIN_TARGET="${BIN_TARGET:-/usr/bin}"
 
 command -v stow >/dev/null 2>&1 || {
   echo "stow is required." >&2
