@@ -59,7 +59,11 @@ hl.bind("SUPER + SHIFT + DOWN", hl.dsp.window.swap({ direction = "d" }))
 hl.bind(mainMod .. " + V", function() hl.exec_cmd("hyprctl dispatch togglefloating") end)
 hl.bind(mainMod .. " + P", function() hl.exec_cmd("hyprctl dispatch pseudo") end)
 hl.bind(mainMod .. " + G", function() hl.exec_cmd("hyprctl dispatch togglegroup") end)
-hl.bind(mainMod .. " + Tab", function() hl.exec_cmd("hyprctl dispatch changegroupactive f") end)
+hl.bind(mainMod .. " + Tab", function()
+    if hl.plugin and hl.plugin.scrolloverview then
+        hl.plugin.scrolloverview.overview("toggle")
+    end
+end)
 
 hl.bind("Print", hl.dsp.exec_cmd("zen0x-capture-screenshot smart"))
 hl.bind(mainMod .. " + mouse_down", function() hl.exec_cmd("hyprctl dispatch workspace e+1") end)
