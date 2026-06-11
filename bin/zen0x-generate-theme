@@ -20,6 +20,8 @@ TEMPLATE_TARGETS = [
     ("templates/swaync/colors.css.tpl",        "~/.config/swaync/colors.css"),
     ("templates/opencode/theme.json.tpl",      "~/.config/opencode/themes/current.json"),
     ("templates/nvim/colors.lua.tpl",          "~/.config/nvim/lua/zen0x/colors.lua"),
+    ("templates/teams-for-linux/config.json.tpl", "~/.config/teams-for-linux/config.json"),
+    ("templates/teams-for-linux/custom.css.tpl",  "~/.config/teams-for-linux/custom.css"),
 ]
 
 

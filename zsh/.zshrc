@@ -169,6 +169,7 @@ alias mv='mv -iv'
 alias rm='rm -I'
 alias grep='grep --color=auto'
 alias vim='nvim'
+alias cat='bat'
 
 # Aliases: Git
 alias gs='git status --short'
