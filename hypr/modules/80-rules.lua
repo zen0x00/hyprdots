@@ -23,7 +23,7 @@ hl.layer_rule({
     name = "blur-swaync-notif",
     match = { namespace = "swaync-notification-window" },
     blur = true,
-    ignore_alpha = 0.5,
+    ignore_alpha = 0,
 })
 
 hl.layer_rule({
@@ -134,6 +134,14 @@ hl.window_rule({
 hl.window_rule({
     name = "float-satty",
     match = { class = "^(com.gabm.satty)$", fullscreen = false },
+    float = true,
+    center = true,
+    size = { 1200, 800 },
+})
+
+hl.window_rule({
+    name = "float-nwg-look",
+    match = { class = "^(nwg-look)$", fullscreen = false },
     float = true,
     center = true,
     size = { 1200, 800 },
