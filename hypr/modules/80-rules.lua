@@ -132,6 +132,22 @@ hl.window_rule({
 })
 
 hl.window_rule({
+    name = "float-satty",
+    match = { class = "^(com.gabm.satty)$", fullscreen = false },
+    float = true,
+    center = true,
+    size = { 1200, 800 },
+})
+
+hl.window_rule({
+    name = "float-zen0x-utility-tuis",
+    match = { class = "^(org.zen0x.wiremix|org.zen0x.impala|org.zen0x.bluetui)$", fullscreen = false },
+    float = true,
+    center = true,
+    size = { 1100, 700 },
+})
+
+hl.window_rule({
     name = "move-hyprland-run",
     match = { class = "hyprland-run" },
     move = { 20, "monitor_h-120" },

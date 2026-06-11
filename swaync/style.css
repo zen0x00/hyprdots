@@ -417,10 +417,10 @@ window.background,
 /* ── Popup (floating) notifications ─────────────────────── */
 
 .notification-popup {
-  background-color: alpha(@bg, 0.6);
-  border: 1px solid alpha(@accent, 0.25);
+  background-color: alpha(@bg, 0.88);
+  border: 1px solid alpha(@accent, 0.32);
   border-radius: 16px;
-  box-shadow: 0 2px 12px alpha(@bg, 0.4);
+  box-shadow: 0 4px 18px alpha(@bg, 0.55);
   margin: 8px;
 }
 
