@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# zen0x:summary=Take screenshots in region, window, or fullscreen mode.
+# zen0x:args=[smart|region|window|fullscreen] [copy] [--editor=<name>]
+
+mode="${1:-smart}"
+copy_only=false
+editor="${ZEN0X_SCREENSHOT_EDITOR:-satty}"
+
+shift || true
+for arg in "$@"; do
+  case "$arg" in
+    copy) copy_only=true ;;
+    --editor=*) editor="${arg#--editor=}" ;;
+  esac
+done
+
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs" ]] && source "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
+base_dir="${ZEN0X_SCREENSHOT_DIR:-${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots}"
+mkdir -p "$base_dir"
+
+notify() {
+  if command -v notify-send >/dev/null 2>&1; then
+    notify-send "$@"
+  fi
+}
+
+active_window_geometry() {
+  hyprctl activewindow -j 2>/dev/null | jq -r '
+    if (.at and .size and (.size[0] > 0) and (.size[1] > 0))
+    then "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"
+    else empty end
+  '
+}
+
+pick_geometry() {
+  case "$mode" in
+    smart)
+      active_window_geometry
+      ;;
+    region)
+      slurp 2>/dev/null || true
+      ;;
+    window)
+      active_window_geometry
+      ;;
+    fullscreen)
+      printf ""
+      ;;
+    *)
+      echo "Usage: zen0x-capture-screenshot [smart|region|window|fullscreen] [copy] [--editor=name]" >&2
+      exit 1
+      ;;
+  esac
+}
+
+open_editor() {
+  local path="$1"
+
+  if [[ "$editor" == "satty" ]] && command -v satty >/dev/null 2>&1; then
+    satty --filename "$path" \
+      --output-filename "$path" \
+      --actions-on-enter save-to-clipboard \
+      --save-after-copy \
+      --copy-command 'wl-copy'
+    return
+  fi
+
+  command -v "$editor" >/dev/null 2>&1 && "$editor" "$path" >/dev/null 2>&1 &
+}
+
+geometry="$(pick_geometry)"
+[[ "$mode" == "smart" && -z "$geometry" ]] && geometry="$(slurp 2>/dev/null || true)"
+[[ "$mode" != "fullscreen" && -z "$geometry" ]] && exit 0
+
+stamp="$(date '+%Y-%m-%d_%H-%M-%S')"
+file="$base_dir/screenshot_$stamp.png"
+
+if [[ -n "$geometry" ]]; then
+  grim -g "$geometry" "$file"
+else
+  grim "$file"
+fi
+
+if $copy_only; then
+  wl-copy < "$file"
+  notify "Screenshot copied" "$file"
+  exit 0
+fi
+
+notify "Screenshot saved" "$file"
+open_editor "$file"

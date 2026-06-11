@@ -4,6 +4,8 @@
 # Zsh: fast, fuzzy, and a little bit pretty.
 # ------------------------------------------------------------
 
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/zen0x/defaults.sh" ]] && source "${XDG_CONFIG_HOME:-$HOME/.config}/zen0x/defaults.sh"
+
 export EDITOR="${EDITOR:-micro}"
 export VISUAL="${VISUAL:-$EDITOR}"
 export PAGER="${PAGER:-less}"

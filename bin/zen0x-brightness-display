@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# zen0x:summary=Adjust display brightness or toggle DPMS.
+# zen0x:args=<+N%|N%-|N%|off|on>
+
+step="${1:-+5%}"
+runtime_dir="${XDG_RUNTIME_DIR:-/tmp}"
+
+if [[ "$step" == "off" ]]; then
+  hyprctl dispatch dpms off >/dev/null 2>&1 || true
+  exit 0
+fi
+
+if [[ "$step" == "on" ]]; then
+  hyprctl dispatch dpms on >/dev/null 2>&1 || true
+  exit 0
+fi
+
+exec 9>"$runtime_dir/zen0x-brightness-display.lock"
+flock -n 9 || exit 0
+
+device="$(ls -1 /sys/class/backlight 2>/dev/null | head -n1)"
+for candidate in amdgpu_bl* intel_backlight acpi_video*; do
+  if compgen -G "/sys/class/backlight/$candidate" >/dev/null 2>&1; then
+    device="${candidate%% *}"
+    break
+  fi
+done
+
+[[ -z "$device" ]] && exit 1
+
+current="$(brightnessctl -d "$device" -m | cut -d',' -f4 | tr -d '%')"
+
+if [[ "$step" == "+5%" ]]; then
+  if (( current < 5 )); then
+    target=$((current + 1))
+  else
+    target=$((current + 5))
+  fi
+  (( target > 100 )) && target=100
+  step="$target%"
+elif [[ "$step" == "5%-" ]]; then
+  if (( current <= 5 )); then
+    target=$((current - 1))
+  else
+    target=$((current - 5))
+  fi
+  (( target < 1 )) && target=1
+  step="$target%"
+fi
+
+brightnessctl -q -d "$device" set "$step"
+
+if command -v notify-send >/dev/null 2>&1; then
+  notify-send "Brightness" "$(brightnessctl -d "$device" -m | cut -d',' -f4)"
+fi

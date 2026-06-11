@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# zen0x:summary=Toggle screen recording for region, window, or fullscreen.
+# zen0x:args=[region|window|fullscreen]
+
+mode="${1:-region}"
+pid_file="${XDG_RUNTIME_DIR:-/tmp}/zen0x-screenrecord.pid"
+[[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs" ]] && source "${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
+base_dir="${ZEN0X_RECORDING_DIR:-${XDG_VIDEOS_DIR:-$HOME/Videos}/ScreenRecordings}"
+mkdir -p "$base_dir"
+
+notify() {
+  command -v notify-send >/dev/null 2>&1 && notify-send "$@"
+}
+
+active_window_geometry() {
+  hyprctl activewindow -j 2>/dev/null | jq -r '
+    if (.at and .size and (.size[0] > 0) and (.size[1] > 0))
+    then "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"
+    else empty end
+  '
+}
+
+if [[ -f "$pid_file" ]]; then
+  pid="$(cat "$pid_file")"
+  if kill -0 "$pid" 2>/dev/null; then
+    kill -INT "$pid"
+    rm -f "$pid_file"
+    notify "Screen recording stopped"
+    exit 0
+  fi
+  rm -f "$pid_file"
+fi
+
+geometry=""
+case "$mode" in
+  region) geometry="$(slurp 2>/dev/null || true)" ;;
+  window) geometry="$(active_window_geometry)" ;;
+  fullscreen) ;;
+  *)
+    echo "Usage: zen0x-capture-screenrecording [region|window|fullscreen]" >&2
+    exit 1
+    ;;
+esac
+
+[[ "$mode" != "fullscreen" && -z "$geometry" ]] && exit 0
+
+stamp="$(date '+%Y-%m-%d_%H-%M-%S')"
+file="$base_dir/recording_$stamp.mkv"
+
+if [[ -n "$geometry" ]]; then
+  wf-recorder -g "$geometry" -f "$file" >/dev/null 2>&1 &
+else
+  wf-recorder -f "$file" >/dev/null 2>&1 &
+fi
+
+echo "$!" > "$pid_file"
+notify "Screen recording started" "$file"

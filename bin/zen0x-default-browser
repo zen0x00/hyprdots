@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# zen0x:summary=Get or set default browser for shell + XDG handlers.
+# zen0x:args=[firefox|zen|chromium|chrome|brave|edge]
+
+defaults_file="${XDG_CONFIG_HOME:-$HOME/.config}/zen0x/defaults.sh"
+programs_file="${XDG_CONFIG_HOME:-$HOME/.config}/hypr/modules/01-programs.lua"
+
+ensure_defaults_file() {
+  mkdir -p "$(dirname "$defaults_file")"
+  [[ -f "$defaults_file" ]] || printf "#!/usr/bin/env bash\n" > "$defaults_file"
+}
+
+set_env_line() {
+  local key="$1"
+  local value="$2"
+  ensure_defaults_file
+  if grep -q "^export $key=" "$defaults_file" 2>/dev/null; then
+    sed -i "s|^export $key=.*|export $key=\"$value\"|" "$defaults_file"
+  else
+    printf 'export %s="%s"\n' "$key" "$value" >> "$defaults_file"
+  fi
+}
+
+if (($# == 0)); then
+  xdg-settings get default-web-browser 2>/dev/null | sed 's/\.desktop$//'
+  exit 0
+fi
+
+case "$1" in
+  firefox) desktop_id="firefox.desktop"; command_name="firefox" ;;
+  zen) desktop_id="zen.desktop"; command_name="zen-browser" ;;
+  chromium) desktop_id="chromium.desktop"; command_name="chromium" ;;
+  chrome) desktop_id="google-chrome.desktop"; command_name="google-chrome-stable" ;;
+  brave) desktop_id="brave-browser.desktop"; command_name="brave-browser" ;;
+  edge) desktop_id="microsoft-edge.desktop"; command_name="microsoft-edge-stable" ;;
+  *)
+    echo "Usage: zen0x-default-browser [firefox|zen|chromium|chrome|brave|edge]" >&2
+    exit 1
+    ;;
+esac
+
+xdg-settings set default-web-browser "$desktop_id"
+xdg-mime default "$desktop_id" x-scheme-handler/http
+xdg-mime default "$desktop_id" x-scheme-handler/https
+xdg-mime default "$desktop_id" text/html
+
+set_env_line BROWSER "$command_name"
+
+if [[ -f "$programs_file" ]]; then
+  sed -i "s/browser = \".*\"/browser = \"$command_name\"/" "$programs_file"
+fi
+
+hyprctl reload >/dev/null 2>&1 || true
+command -v notify-send >/dev/null 2>&1 && notify-send "Default browser" "$1"
