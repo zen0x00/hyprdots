@@ -16,6 +16,7 @@
     "group/tray-expander",
     "pulseaudio",
     "network",
+    "bluetooth",
     "battery",
     "clock",
     "custom/controlcenter",
@@ -124,6 +125,16 @@
     "interval": 3,
     "spacing": 1,
     "on-click": "zen0x-launch-wifi",
+  },
+
+  "bluetooth": {
+    "format": "󰂯",
+    "format-disabled": "󰂲",
+    "format-off": "󰂲",
+    "format-connected": "󰂱",
+    "tooltip-format": "{status}",
+    "tooltip-format-connected": "{device_alias}",
+    "on-click": "zen0x-launch-bluetooth",
   },
 
   "custom/controlcenter": {

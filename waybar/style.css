@@ -85,7 +85,8 @@ window#waybar {
   border-radius: 14px;
 }
 
-#network {
+#network,
+#bluetooth {
   color: @fg;
   font-size: 12px;
   padding: 0 8px;

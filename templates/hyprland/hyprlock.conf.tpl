@@ -112,10 +112,10 @@ input-field {
 # Hint
 label {
     monitor =
-    text = Press Enter to unlock
-    color = rgba({{ semantic.subtle | strip_hash }}88)
-    font_size = 13
-    font_family = JetBrainsMono Nerd Font
+    text = DO NOT TOUCH
+    color = rgba({{ semantic.subtle | strip_hash }}cc)
+    font_size = 24
+    font_family = JetBrainsMono Nerd Font Mono
     position = 0, -215
     halign = center
     valign = center
