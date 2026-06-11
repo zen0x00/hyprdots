@@ -90,6 +90,8 @@ hl.window_rule({
 })
 
 local steam_class = "^(steam|Steam|steamwebhelper)$"
+local unityhub_class = "^(unityhub|Unity Hub)$"
+local unity_editor_popup_title = "^(?!.* - Unity( .*)?$).+"
 
 hl.window_rule({
     name = "steam-floating",
@@ -117,7 +119,7 @@ hl.layer_rule({ name = "no-anim-selection", match = { namespace = "selection" },
 
 hl.window_rule({
     name = "float-files",
-    match = { class = "^(org.gnome.Nautilus)$", fullscreen = false },
+    match = { class = "^(org.gnome.Nautilus|thunar)$", fullscreen = false },
     float = true,
     center = true,
     size = { 1100, 700 },
@@ -125,10 +127,17 @@ hl.window_rule({
 
 hl.window_rule({
     name = "float-unityhub",
-    match = { class = "^(unityhub)$", fullscreen = false },
+    match = { class = unityhub_class, fullscreen = false },
     float = true,
     center = true,
     size = { 1100, 700 },
+})
+
+hl.window_rule({
+    name = "center-unity-popups",
+    match = { class = "^Unity$", title = unity_editor_popup_title, fullscreen = false },
+    float = true,
+    center = true,
 })
 
 hl.window_rule({
@@ -165,6 +174,6 @@ hl.window_rule({
 hl.window_rule({ name = "ws1-zen-browser", match = { class = "^(zen|Zen)$" }, workspace = "1" })
 hl.window_rule({ name = "ws2-terminal", match = { class = "^(kitty|Kitty|Alacritty|WezTerm|foot)$" }, workspace = "2" })
 hl.window_rule({ name = "ws3-vscode", match = { class = "^(code|Code|vscode|VSCode)$" }, workspace = "3" })
-hl.window_rule({ name = "ws4-unity", match = { class = "^(unityhub|Unity)" }, workspace = "4" })
+hl.window_rule({ name = "ws4-unity", match = { class = "^(unityhub|Unity Hub|Unity)$" }, workspace = "4" })
 hl.window_rule({ name = "ws5-steam-heroic", match = { class = "^(steam|Steam|heroic|Heroic)$" }, workspace = "5" })
 hl.window_rule({ name = "ws6-games", match = { title = "^(.*%.exe|.*game|.*Game)$" }, workspace = "6" })

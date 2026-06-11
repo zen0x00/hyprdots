@@ -16,19 +16,19 @@ read_theme_value() {
 }
 
 get_gtk_theme_name() {
-    local current_theme theme_dir vscode_file theme_name
+    local current_theme theme_dir gtk_theme_file
 
     [[ -f "$ROOT/.current-theme" ]] || return 1
     current_theme="$(<"$ROOT/.current-theme")"
     theme_dir="$ROOT/themes/$current_theme"
-    vscode_file="$theme_dir/vscode.json"
+    gtk_theme_file="$theme_dir/gtk.theme"
 
-    [[ -f "$vscode_file" ]] || return 1
+    if [[ -f "$gtk_theme_file" ]]; then
+        read_theme_value "$gtk_theme_file"
+        return
+    fi
 
-    theme_name="$(sed -n 's/^[[:space:]]*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$vscode_file" | head -n1)"
-    [[ -n "$theme_name" ]] || return 1
-
-    printf '%s\n' "$theme_name"
+    printf 'Abyssal-%s\n' "$current_theme"
 }
 
 if command -v hyprctl >/dev/null 2>&1; then
@@ -52,16 +52,25 @@ command -v swayosd-server >/dev/null 2>&1 && swayosd-server &>/dev/null &
 command -v swaync-client >/dev/null 2>&1 && swaync-client --reload-css 2>/dev/null || true
 
 if command -v gsettings >/dev/null 2>&1; then
-    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null || true
+    if ! gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null; then
+        echo "Warning: failed to set GTK color scheme." >&2
+        status=1
+    fi
 
     if gtk_theme="$(get_gtk_theme_name)"; then
-        gsettings set org.gnome.desktop.interface gtk-theme "$gtk_theme" 2>/dev/null || true
+        if ! gsettings set org.gnome.desktop.interface gtk-theme "$gtk_theme" 2>/dev/null; then
+            echo "Warning: failed to set GTK theme to '$gtk_theme'." >&2
+            status=1
+        fi
     fi
 
     if [[ -f "$ROOT/.current-theme" ]]; then
         icon_theme_file="$ROOT/themes/$(<"$ROOT/.current-theme")/icon.theme"
         if icon_theme="$(read_theme_value "$icon_theme_file")"; then
-            gsettings set org.gnome.desktop.interface icon-theme "$icon_theme" 2>/dev/null || true
+            if ! gsettings set org.gnome.desktop.interface icon-theme "$icon_theme" 2>/dev/null; then
+                echo "Warning: failed to set icon theme to '$icon_theme'." >&2
+                status=1
+            fi
         fi
     fi
 fi

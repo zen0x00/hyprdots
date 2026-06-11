@@ -39,7 +39,7 @@ PACMAN_PACKAGES=(
     rofi-wayland kitty
 
     # File manager
-    nautilus
+    thunar
 
     # Clipboard
     wl-clipboard cliphist
