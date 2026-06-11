@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 TEMPLATE_TARGETS = [
+    ("templates/btop/theme.theme.tpl",         "~/.config/btop/themes/zen0x-current.theme"),
     ("templates/kitty/colors.conf.tpl",        "~/.config/kitty/colors.conf"),
     ("templates/hyprland/colors.conf.tpl",     "~/.config/hypr/colors.conf"),
     ("templates/hyprland/colors.lua.tpl",      "~/.config/hypr/colors.lua"),
@@ -109,6 +110,22 @@ def main() -> int:
         target_path.write_text(content)
 
     if not args.dry_run:
+        btop_config_path = Path("~/.config/btop/btop.conf").expanduser()
+        btop_config_path.parent.mkdir(parents=True, exist_ok=True)
+        btop_config = btop_config_path.read_text() if btop_config_path.exists() else ""
+        if re.search(r'^\s*color_theme\s*=.*$', btop_config, flags=re.MULTILINE):
+            btop_config = re.sub(
+                r'^\s*color_theme\s*=.*$',
+                'color_theme = "zen0x-current"',
+                btop_config,
+                count=1,
+                flags=re.MULTILINE,
+            )
+        else:
+            prefix = "" if not btop_config or btop_config.endswith("\n") else "\n"
+            btop_config = f'{btop_config}{prefix}color_theme = "zen0x-current"\n'
+        btop_config_path.write_text(btop_config)
+
         tui_path = Path("~/.config/opencode/tui.json").expanduser()
         tui_path.parent.mkdir(parents=True, exist_ok=True)
         tui = json.loads(tui_path.read_text()) if tui_path.exists() else {}
