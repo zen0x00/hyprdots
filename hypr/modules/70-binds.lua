@@ -1,9 +1,10 @@
 local programs = require("modules/01-programs")
 
 local mainMod = "SUPER"
+local ipc = "noctalia msg"
 
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(programs.terminal))
-hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd("xdg-terminal-exec --app-id=org.zen0x.floating-terminal"))
+hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd(programs.terminal .. " --class org.zen0x.floating-terminal"))
 hl.bind(mainMod .. "+ W", hl.dsp.window.close())
 hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || uwsm stop"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(programs.file_manager))
@@ -12,12 +13,12 @@ hl.bind(mainMod .. " + SHIFT + F", function()
     hl.exec_cmd("hyprctl dispatch fullscreen 0")
 end)
 
-hl.bind("SUPER + space", hl.dsp.exec_cmd(programs.menu))
+hl.bind(mainMod .. "+Space", hl.dsp.exec_cmd(ipc .. " panel-toggle launcher"))
+hl.bind(mainMod .. "+C", hl.dsp.exec_cmd(ipc .. " panel-toggle control-center"))
+hl.bind(mainMod .. "+comma", hl.dsp.exec_cmd(ipc .. " settings-toggle"))
 hl.bind("SUPER + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind("SUPER + SHIFT + C", hl.dsp.exec_cmd("code"))
 hl.bind("SUPER + SHIFT + Escape", hl.dsp.exec_cmd("zen0x-powermenu"))
-hl.bind("SUPER + SHIFT + space", hl.dsp.exec_cmd("zen0x-theme-menu"))
-hl.bind("SUPER + SHIFT + W", hl.dsp.exec_cmd("zen0x-theme-reload"))
 
 hl.bind(mainMod .. " + Left", function() hl.exec_cmd("hyprctl dispatch movefocus l") end)
 hl.bind(mainMod .. " + Right", function() hl.exec_cmd("hyprctl dispatch movefocus r") end)
@@ -56,7 +57,8 @@ hl.bind("SUPER + SHIFT + RIGHT", hl.dsp.window.swap({ direction = "r" }))
 hl.bind("SUPER + SHIFT + UP", hl.dsp.window.swap({ direction = "u" }))
 hl.bind("SUPER + SHIFT + DOWN", hl.dsp.window.swap({ direction = "d" }))
 
-hl.bind(mainMod .. " + V", function() hl.exec_cmd("hyprctl dispatch togglefloating") end)
+hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + P", function() hl.exec_cmd("hyprctl dispatch pseudo") end)
 hl.bind(mainMod .. " + G", function() hl.exec_cmd("hyprctl dispatch togglegroup") end)
 hl.bind(mainMod .. " + Tab", function()
@@ -72,17 +74,15 @@ hl.bind(mainMod .. " + mouse_up", function() hl.exec_cmd("hyprctl dispatch works
 hl.bind("SUPER + mouse:272", hl.dsp.window.drag())
 hl.bind("SUPER + mouse:273", hl.dsp.window.resize())
 
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("swayosd-client --output-volume raise"), { locked = true, repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("swayosd-client --output-volume lower"), { locked = true, repeating = true })
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd("swayosd-client --output-volume mute-toggle"), { locked = true })
-hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("swayosd-client --brightness raise"), { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("swayosd-client --brightness lower"), { locked = true, repeating = true })
-hl.bind("Caps_Lock", hl.dsp.exec_cmd("swayosd-client --caps-lock"))
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd(ipc .. " volume-up"))
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd(ipc .. " volume-down"))
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd(ipc .. " volume-mute"))
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd(ipc .. " brightness-up"))
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(ipc .. " brightness-down"))
 
 hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
-hl.bind("SUPER + C", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -theme ~/.config/rofi/launcher.rasi | cliphist decode | wl-copy"))
 hl.bind("SUPER + SHIFT + P", hl.dsp.exec_cmd("hyprpicker -a"))

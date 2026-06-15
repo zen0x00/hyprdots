@@ -9,3 +9,6 @@ require("modules/55-scrolloverview")
 require("modules/60-input")
 require("modules/70-binds")
 require("modules/80-rules")
+
+-- For Noctalia Color templates
+require("noctalia")

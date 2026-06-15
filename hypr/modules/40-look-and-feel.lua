@@ -1,13 +1,13 @@
-local colors = require("colors")
-
 hl.config({
     general = {
         gaps_in = 10,
         gaps_out = 20,
         gaps_workspaces = 10,
         border_size = 1,
-        ["col.active_border"] = colors.active_border,
-        ["col.inactive_border"] = colors.inactive_border,
+        col = {
+	    active_border =  "rgba(595959aa)",
+            inactive_border = "rgba(595959aa)",
+	},
         resize_on_border = true,
         allow_tearing = false,
         layout = "dwindle",
@@ -26,8 +26,6 @@ hl.config({
             range = 20,
             render_power = 3,
             offset = { 0, 4 },
-            color = colors.shadow_color,
-            color_inactive = colors.shadow_inactive_color,
         },
         blur = {
             enabled = true,

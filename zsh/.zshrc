@@ -169,6 +169,7 @@ alias rm='rm -I'
 alias grep='grep --color=auto'
 alias vim='nvim'
 alias cat='bat'
+alias codex='codex "/caveman ultra"'
 
 # Aliases: Git
 alias gs='git status --short'
@@ -212,3 +213,6 @@ extract() {
 # >>> Codex installer >>>
 export PATH="/home/zen0x/.local/bin:$PATH"
 # <<< Codex installer <<<
+
+export PATH=$PATH:/home/aman/.spicetify
+export PATH=$PATH:~/.spicetify

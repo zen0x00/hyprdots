@@ -1,5 +1,3 @@
-local colors = require("colors")
-
 local function set_keyword(key, value)
     hl.exec_cmd(string.format("hyprctl keyword %s %s", key, value))
 end
@@ -14,5 +12,4 @@ hl.on("hyprland.start", function()
     set_keyword("plugin:scrolloverview:shadow:range", "20")
     set_keyword("plugin:scrolloverview:shadow:render_power", "3")
     set_keyword("plugin:scrolloverview:shadow:ignore_window", "false")
-    set_keyword("plugin:scrolloverview:shadow:color", colors.shadow_color)
 end)

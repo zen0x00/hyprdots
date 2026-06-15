@@ -1,36 +1,11 @@
 hl.layer_rule({
-    name = "blur-waybar",
-    match = { namespace = "waybar" },
-    blur = true,
-    ignore_alpha = 0.5,
-})
-
-hl.layer_rule({
-    name = "blur-rofi",
-    match = { namespace = "rofi" },
-    blur = true,
-    ignore_alpha = 0.5,
-})
-
-hl.layer_rule({
-    name = "blur-swaync-cc",
-    match = { namespace = "swaync-control-center" },
-    blur = true,
-    ignore_alpha = 0.6,
-})
-
-hl.layer_rule({
-    name = "blur-swaync-notif",
-    match = { namespace = "swaync-notification-window" },
-    blur = true,
-    ignore_alpha = 0,
-})
-
-hl.layer_rule({
-    name = "blur-swayosd",
-    match = { namespace = "swayosd" },
-    blur = true,
-    ignore_alpha = 0.5,
+  name = "noctalia",
+  match = {
+    namespace = "^noctalia-(bar-.+|notification|dock|panel|attached-panel|osd)$",
+  },
+  ignore_alpha = 0.5,
+  blur = true,
+  blur_popups = true,
 })
 
 hl.window_rule({

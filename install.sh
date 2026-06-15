@@ -8,8 +8,6 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="${DOTFILES_DIR:-$SCRIPT_DIR}"
 DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/zen0x00/dotfiles.git}"
-DEFAULT_THEME="gruvbox"
-
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; NC='\033[0m'
 info()    { printf "${CYAN}:: %s${NC}\n" "$*"; }
 success() { printf "${GREEN}✓  %s${NC}\n" "$*"; }
@@ -26,17 +24,18 @@ PACMAN_PACKAGES=(
     # Core tools
     git stow python3 micro
 
+    # Build tools for hyprpm / plugin builds
+    gcc cmake cpio pkgconf
+
     # Shell
     zsh fzf zoxide starship eza fastfetch
 
     # Wayland / WM
     hyprland uwsm hypridle hyprlock hyprpaper hyprpolkitagent hyprcursor
-
-    # Status bar / notifications / OSD
-    waybar swaync swayosd
+    greetd dbus
 
     # Launcher & terminal
-    rofi-wayland kitty
+    kitty
 
     # File manager
     thunar
@@ -52,17 +51,15 @@ PACMAN_PACKAGES=(
     pipewire pipewire-alsa pipewire-pulse wireplumber
     brightnessctl
 
-    # Fonts (icons needed by eza, waybar, fastfetch)
+    # Fonts
     ttf-nerd-fonts-symbols
     ttf-jetbrains-mono-nerd
     noto-fonts noto-fonts-emoji
 )
 
 AUR_PACKAGES=(
-    zen-browser-bin
-    awww-git
-    ly
-    openrgb
+    noctalia-git
+    noctalia-greeter-git
 )
 
 step "AUR helper"
@@ -124,15 +121,6 @@ cd "$DOTFILES_DIR"
 "$DOTFILES_DIR/modules/stow.sh"
 success "Stow done"
 
-# ── theme ──────────────────────────────────────────────────────────────────────
-step "Apply default theme ($DEFAULT_THEME)"
-if command -v zen0x-apply-theme >/dev/null 2>&1; then
-    zen0x-apply-theme "$DEFAULT_THEME" || warn "Theme apply failed — run 'zen0x-apply-theme $DEFAULT_THEME' manually"
-    success "Theme applied: $DEFAULT_THEME"
-else
-    warn "zen0x-apply-theme not in PATH yet — run it after logging in."
-fi
-
 # ── default shell ──────────────────────────────────────────────────────────────
 step "Default shell"
 ZSH_BIN="$(command -v zsh)"
@@ -148,10 +136,13 @@ fi
 # ── services ───────────────────────────────────────────────────────────────────
 step "Services"
 
-info "Disabling getty@tty2, enabling ly@tty2..."
-sudo systemctl disable getty@tty2.service
-sudo systemctl enable ly@tty2.service
-success "ly display manager enabled on tty2"
+info "Preparing greetd greeter user..."
+sudo useradd -r -s /usr/bin/nologin -d /var/lib/noctalia-greeter greeter 2>/dev/null || true
+
+info "Disabling ly, enabling greetd..."
+sudo systemctl disable ly.service ly@tty2.service 2>/dev/null || true
+sudo systemctl enable greetd.service
+success "greetd enabled with noctalia-greeter"
 
 info "Enabling hyprpolkitagent (user)..."
 systemctl --user enable hyprpolkitagent
@@ -159,11 +150,10 @@ success "hyprpolkitagent enabled"
 
 # ── uwsm / session ─────────────────────────────────────────────────────────────
 step "Hyprland session"
-info "uwsm manages Hyprland autostart. Select 'Hyprland' in your display manager."
+info "uwsm manages Hyprland autostart. Pick 'Hyprland (uwsm-managed)' in Noctalia Greeter."
 info "Or from TTY: uwsm start hyprland.desktop"
 
 # ── done ───────────────────────────────────────────────────────────────────────
 printf "\n${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n"
 printf "${GREEN}  Done. Log out and back in (or reboot) to start.${NC}\n"
-printf "${GREEN}  Switch themes: zen0x-theme-menu${NC}\n"
 printf "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}\n\n"

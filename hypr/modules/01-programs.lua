@@ -1,6 +1,6 @@
 return {
     terminal = "kitty",
-    file_manager = "thunar",
+    file_manager = "nautilus",
     browser = "zen-browser",
-    menu = "rofi -show drun -theme ~/.config/rofi/launcher.rasi",
+    menu = "noctalia msg panel-toggle launcher",
 }

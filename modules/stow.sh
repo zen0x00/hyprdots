@@ -5,9 +5,9 @@ DOTFILES_DIR="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 STOW_BACKUP_ROOT="${STOW_BACKUP_ROOT:-$HOME/.local/state/zen0x-stow-backups}"
 STOW_TIMESTAMP="${STOW_TIMESTAMP:-$(date +%Y%m%d-%H%M%S)}"
 STOW_BACKUP_DIR="$STOW_BACKUP_ROOT/$STOW_TIMESTAMP"
-BIN_TARGET="${BIN_TARGET:-/usr/bin}"
 HOME_TARGET="${HOME_TARGET:-$HOME}"
 CONFIG_ROOT_TARGET="${CONFIG_ROOT_TARGET:-$HOME/.config}"
+GREETD_TARGET="${GREETD_TARGET:-/etc/greetd}"
 BACKUP_USED=false
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; NC='\033[0m'
@@ -153,7 +153,7 @@ stow_package() {
     prepare_conflicts "$package" "$target_root" "$use_sudo"
 
     if [[ "$use_sudo" == true ]]; then
-        sudo "${simulate_cmd[@]}" >/dev/null
+        sudo "${simulate_cmd[@]}" >/dev/nullwww
         sudo "${stow_cmd[@]}"
     else
         "${simulate_cmd[@]}" >/dev/null
@@ -163,12 +163,10 @@ stow_package() {
     success "Stowed $package"
 }
 
-BIN_USE_SUDO="${BIN_USE_SUDO:-true}"
-
-stow_package "bin" "$BIN_TARGET" "$BIN_USE_SUDO"
 stow_package "zsh" "$HOME_TARGET" false
+stow_package "greetd" "$GREETD_TARGET" true
 
-CONFIG_PACKAGES=(fastfetch hypr kitty rofi swayosd swaync waybar)
+CONFIG_PACKAGES=(fastfetch hypr kitty nvim)
 for pkg in "${CONFIG_PACKAGES[@]}"; do
     stow_package "$pkg" "$CONFIG_ROOT_TARGET/$pkg" false
 done
