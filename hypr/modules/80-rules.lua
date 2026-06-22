@@ -154,6 +154,13 @@ hl.window_rule({
     float = true,
 })
 
+for i = 1, 5 do
+    hl.workspace_rule({
+        workspace = tostring(i),
+        persistent = true,
+    })
+end
+
 hl.window_rule({ name = "ws1-zen-browser", match = { class = "^(zen|Zen)$" }, workspace = "1" })
 hl.window_rule({ name = "ws2-terminal", match = { class = "^(kitty|Kitty|Alacritty|WezTerm|foot)$" }, workspace = "2" })
 hl.window_rule({ name = "ws3-vscode", match = { class = "^(code|Code|vscode|VSCode)$" }, workspace = "3" })

@@ -153,7 +153,7 @@ stow_package() {
     prepare_conflicts "$package" "$target_root" "$use_sudo"
 
     if [[ "$use_sudo" == true ]]; then
-        sudo "${simulate_cmd[@]}" >/dev/nullwww
+        sudo "${simulate_cmd[@]}" >/dev/null
         sudo "${stow_cmd[@]}"
     else
         "${simulate_cmd[@]}" >/dev/null
@@ -164,7 +164,6 @@ stow_package() {
 }
 
 stow_package "zsh" "$HOME_TARGET" false
-stow_package "greetd" "$GREETD_TARGET" true
 
 CONFIG_PACKAGES=(fastfetch hypr kitty nvim)
 for pkg in "${CONFIG_PACKAGES[@]}"; do
