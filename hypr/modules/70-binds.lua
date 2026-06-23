@@ -45,6 +45,7 @@ hl.bind(mainMod .. " + ALT + S", hl.dsp.window.move({ workspace = "special:scrat
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("zen0x-capture-screenshot region"))
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("zen0x-capture-ocr"))
 hl.bind(mainMod .. " + ALT + M", hl.dsp.exec_cmd("zen0x-audio-output-switch"))
+hl.bind(mainMod .. " + ALT + A", hl.dsp.exec_cmd("easyeffects"))
 hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("zen0x-capture-screenrecording region"))
 
 hl.bind("SUPER + LEFT", hl.dsp.focus({ direction = "l" }))

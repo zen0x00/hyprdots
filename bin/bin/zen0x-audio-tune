@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cat <<'EOF'
+Lenovo ALC257 Linux audio tune
+==============================
+
+Goal
+- approximate louder Windows laptop speaker voicing on Linux
+- keep clipping risk low
+
+Install if missing
+- sudo pacman -S sof-firmware alsa-ucm-conf easyeffects pavucontrol
+
+Check output path
+1. Open pavucontrol.
+2. Configuration tab:
+   - built-in audio profile should be analog stereo output
+3. Output Devices tab:
+   - select internal speakers, not HDMI
+
+EasyEffects output chain
+1. Open EasyEffects.
+2. Output section.
+3. Enable plugins in this order:
+   - Equalizer
+   - Loudness
+   - Limiter
+
+Equalizer bands
+- 31 Hz:   0.0 dB
+- 63 Hz:   2.5 dB
+- 125 Hz:  3.0 dB
+- 250 Hz:  1.5 dB
+- 500 Hz:  0.0 dB
+- 1 kHz:   0.5 dB
+- 2 kHz:   1.5 dB
+- 4 kHz:   2.0 dB
+- 8 kHz:   1.0 dB
+- 16 kHz:  0.0 dB
+- Preamp: -4.5 dB
+
+Loudness
+- Enable
+- Input:  -18 dB
+- Output: 0 dB
+- Link:   enabled
+- FFT:    4096 if available
+
+Limiter
+- Input gain:  3.0 dB
+- Limit:      -1.0 dB
+- Lookahead:   5.0 ms
+- Release:    50 ms
+
+Notes
+- If sound gets harsh: lower 4 kHz to 1.0 dB.
+- If bass distorts: lower 63/125 Hz by 1 dB each.
+- If still quiet: raise Limiter input gain to 4.5 dB max.
+- Do not set EasyEffects virtual sink as default device.
+EOF

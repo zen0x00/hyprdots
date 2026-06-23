@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mode="${1:-region}"
+shots_dir="${XDG_PICTURES_DIR:-$HOME/Pictures}/Screenshots"
+mkdir -p "$shots_dir"
+
+satty_args=(
+  --filename -
+  --output-filename "$shots_dir/%Y-%m-%d_%H-%M-%S.png"
+  --copy-command wl-copy
+  --actions-on-enter save-to-clipboard,save-to-file,exit
+  --early-exit save copy
+  --fullscreen current-screen
+)
+
+capture_region() {
+  if command -v hyprshot >/dev/null 2>&1; then
+    hyprshot -m region --raw
+  else
+    grim -g "$(slurp)" -
+  fi
+}
+
+capture_smart() {
+  if command -v hyprshot >/dev/null 2>&1; then
+    hyprshot -m region --raw
+  else
+    grim -g "$(slurp)" -
+  fi
+}
+
+case "$mode" in
+  region)
+    capture_region | satty "${satty_args[@]}"
+    ;;
+  smart)
+    capture_smart | satty "${satty_args[@]}"
+    ;;
+  *)
+    printf 'Unknown mode: %s\n' "$mode" >&2
+    exit 1
+    ;;
+esac

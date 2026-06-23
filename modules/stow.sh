@@ -164,8 +164,9 @@ stow_package() {
 }
 
 stow_package "zsh" "$HOME_TARGET" false
+stow_package "bin" "/usr" true
 
-CONFIG_PACKAGES=(fastfetch hypr kitty nvim)
+CONFIG_PACKAGES=(fastfetch hypr kitty nvim wireplumber)
 for pkg in "${CONFIG_PACKAGES[@]}"; do
     stow_package "$pkg" "$CONFIG_ROOT_TARGET/$pkg" false
 done

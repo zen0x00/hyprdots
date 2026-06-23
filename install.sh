@@ -44,11 +44,13 @@ PACMAN_PACKAGES=(
     wl-clipboard cliphist
 
     # Capture / OCR / media
-    grim slurp satty hyprpicker wf-recorder
-    jq tesseract tesseract-data-eng xdg-utils libnotify
+    grim slurp satty hyprpicker hyprshot wf-recorder
+    jq tesseract tesseract-data-eng xdg-utils libnotify playerctl
 
     # Audio / brightness
     pipewire pipewire-alsa pipewire-pulse wireplumber
+    sof-firmware alsa-ucm-conf pavucontrol
+    easyeffects lsp-plugins-lv2 calf zam-plugins mda.lv2
     brightnessctl
 
     # Fonts
