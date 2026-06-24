@@ -109,6 +109,14 @@ hl.window_rule({
 })
 
 hl.window_rule({
+    name = "float-android-studio-welcome",
+    match = { class = "^(jetbrains-studio)$", title = "^Welcome to Android Studio$", fullscreen = false },
+    float = true,
+    center = true,
+    size = { 900, 600 },
+})
+
+hl.window_rule({
     name = "center-unity-popups",
     match = { class = "^Unity$", title = unity_editor_popup_title, fullscreen = false },
     float = true,
@@ -120,7 +128,7 @@ hl.window_rule({
     match = { class = "^(com.gabm.satty)$", fullscreen = false },
     float = true,
     center = true,
-    size = { 1200, 800 },
+    size = { 900, 600 },
 })
 
 hl.window_rule({

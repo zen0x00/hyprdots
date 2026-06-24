@@ -11,7 +11,8 @@ satty_args=(
   --copy-command wl-copy
   --actions-on-enter save-to-clipboard,save-to-file,exit
   --early-exit save copy
-  --fullscreen current-screen
+  --resize 900x600
+  --floating-hack
 )
 
 capture_region() {

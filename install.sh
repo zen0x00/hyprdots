@@ -53,6 +53,9 @@ PACMAN_PACKAGES=(
     easyeffects lsp-plugins-lv2 calf zam-plugins mda.lv2
     brightnessctl
 
+    # Portals
+    xdg-desktop-portal xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
+
     # Fonts
     ttf-nerd-fonts-symbols
     ttf-jetbrains-mono-nerd
