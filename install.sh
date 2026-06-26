@@ -22,7 +22,7 @@ command -v pacman >/dev/null 2>&1 || die "pacman not found — Arch/CachyOS only
 # ── packages ───────────────────────────────────────────────────────────────────
 PACMAN_PACKAGES=(
     # Core tools
-    git stow python3 micro
+    git stow python3 micro dosfstools libimobiledevice usbmuxd
 
     # Build tools for hyprpm / plugin builds
     gcc cmake cpio pkgconf
@@ -48,9 +48,6 @@ PACMAN_PACKAGES=(
 
     # Audio / brightness
     pipewire pipewire-alsa pipewire-pulse wireplumber
-    sof-firmware alsa-ucm-conf pavucontrol
-    easyeffects lsp-plugins-lv2 calf zam-plugins mda.lv2
-    brightnessctl
 
     # Virtualization
     qemu-full libvirt virt-manager dnsmasq edk2-ovmf swtpm vde2 openbsd-netcat
@@ -65,6 +62,7 @@ PACMAN_PACKAGES=(
 )
 
 AUR_PACKAGES=(
+    freedownloadmanager
     bridge-utils
     noctalia-git
 )

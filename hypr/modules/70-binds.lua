@@ -6,11 +6,14 @@ local ipc = "noctalia msg"
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(programs.terminal))
 hl.bind(mainMod .. " + SHIFT + Return", hl.dsp.exec_cmd(programs.terminal .. " --class org.zen0x.floating-terminal"))
 hl.bind(mainMod .. "+ W", hl.dsp.window.close())
-hl.bind(mainMod .. " + SHIFT + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || uwsm stop"))
+hl.bind(
+	mainMod .. " + SHIFT + M",
+	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || uwsm stop")
+)
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(programs.file_manager))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(programs.browser))
 hl.bind(mainMod .. " + SHIFT + F", function()
-    hl.exec_cmd("hyprctl dispatch fullscreen 0")
+	hl.exec_cmd("hyprctl dispatch fullscreen 0")
 end)
 
 hl.bind(mainMod .. "+Space", hl.dsp.exec_cmd(ipc .. " panel-toggle launcher"))
@@ -19,35 +22,62 @@ hl.bind(mainMod .. "+ SHIFT + W", hl.dsp.exec_cmd(ipc .. " panel-toggle wallpape
 hl.bind(mainMod .. "+comma", hl.dsp.exec_cmd(ipc .. " settings-toggle"))
 hl.bind("SUPER + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind("SUPER + SHIFT + C", hl.dsp.exec_cmd("code"))
-hl.bind("SUPER + SHIFT + Escape", hl.dsp.exec_cmd("zen0x-powermenu"))
+hl.bind("SUPER + SHIFT + Escape", hl.dsp.exec_cmd(ipc .. " panel-toggle session"))
 
-hl.bind(mainMod .. " + Left", function() hl.exec_cmd("hyprctl dispatch movefocus l") end)
-hl.bind(mainMod .. " + Right", function() hl.exec_cmd("hyprctl dispatch movefocus r") end)
-hl.bind(mainMod .. " + Up", function() hl.exec_cmd("hyprctl dispatch movefocus u") end)
-hl.bind(mainMod .. " + Down", function() hl.exec_cmd("hyprctl dispatch movefocus d") end)
-hl.bind(mainMod .. " + H", function() hl.exec_cmd("hyprctl dispatch movefocus l") end)
-hl.bind(mainMod .. " + L", function() hl.exec_cmd("hyprctl dispatch movefocus r") end)
-hl.bind(mainMod .. " + K", function() hl.exec_cmd("hyprctl dispatch movefocus u") end)
-hl.bind(mainMod .. " + J", function() hl.exec_cmd("hyprctl dispatch movefocus d") end)
+hl.bind(mainMod .. " + Left", function()
+	hl.exec_cmd("hyprctl dispatch movefocus l")
+end)
+hl.bind(mainMod .. " + Right", function()
+	hl.exec_cmd("hyprctl dispatch movefocus r")
+end)
+hl.bind(mainMod .. " + Up", function()
+	hl.exec_cmd("hyprctl dispatch movefocus u")
+end)
+hl.bind(mainMod .. " + Down", function()
+	hl.exec_cmd("hyprctl dispatch movefocus d")
+end)
+hl.bind(mainMod .. " + H", function()
+	hl.exec_cmd("hyprctl dispatch movefocus l")
+end)
+hl.bind(mainMod .. " + L", function()
+	hl.exec_cmd("hyprctl dispatch movefocus r")
+end)
+hl.bind(mainMod .. " + K", function()
+	hl.exec_cmd("hyprctl dispatch movefocus u")
+end)
+hl.bind(mainMod .. " + J", function()
+	hl.exec_cmd("hyprctl dispatch movefocus d")
+end)
 
-hl.bind(mainMod .. " + SHIFT + H", function() hl.exec_cmd("hyprctl dispatch swapwindow l") end)
-hl.bind(mainMod .. " + SHIFT + L", function() hl.exec_cmd("hyprctl dispatch swapwindow r") end)
-hl.bind(mainMod .. " + SHIFT + K", function() hl.exec_cmd("hyprctl dispatch swapwindow u") end)
-hl.bind(mainMod .. " + SHIFT + J", function() hl.exec_cmd("hyprctl dispatch swapwindow d") end)
+hl.bind(mainMod .. " + SHIFT + H", function()
+	hl.exec_cmd("hyprctl dispatch swapwindow l")
+end)
+hl.bind(mainMod .. " + SHIFT + L", function()
+	hl.exec_cmd("hyprctl dispatch swapwindow r")
+end)
+hl.bind(mainMod .. " + SHIFT + K", function()
+	hl.exec_cmd("hyprctl dispatch swapwindow u")
+end)
+hl.bind(mainMod .. " + SHIFT + J", function()
+	hl.exec_cmd("hyprctl dispatch swapwindow d")
+end)
 
 for i = 1, 10 do
-    local key = i % 10 -- 10 maps to key 0
-    hl.bind(mainMod .. " + " .. key,             hl.dsp.focus({ workspace = i}))
-    hl.bind(mainMod .. " + SHIFT + " .. key,     hl.dsp.window.move({ workspace = i }))
+	local key = i % 10 -- 10 maps to key 0
+	hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
+	hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
 for i = 1, 5 do
-    local scratchpad = "scratchpad" .. i
-    hl.bind(mainMod .. " + ALT + " .. i, hl.dsp.workspace.toggle_special(scratchpad))
-    hl.bind(mainMod .. " + ALT + SHIFT + " .. i, hl.dsp.window.move({ workspace = "special:" .. scratchpad, follow = false }))
+	local scratchpad = "scratchpad" .. i
+	hl.bind(mainMod .. " + ALT + " .. i, hl.dsp.workspace.toggle_special(scratchpad))
+	hl.bind(
+		mainMod .. " + ALT + SHIFT + " .. i,
+		hl.dsp.window.move({ workspace = "special:" .. scratchpad, follow = false })
+	)
 end
 
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("zen0x-capture-screenshot region"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("noctalia msg screenshot-region"))
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("zen0x-capture-ocr"))
 hl.bind(mainMod .. " + ALT + M", hl.dsp.exec_cmd("zen0x-audio-output-switch"))
 hl.bind(mainMod .. " + ALT + A", hl.dsp.exec_cmd("easyeffects"))
@@ -65,17 +95,25 @@ hl.bind("SUPER + SHIFT + DOWN", hl.dsp.window.swap({ direction = "d" }))
 
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + P", function() hl.exec_cmd("hyprctl dispatch pseudo") end)
-hl.bind(mainMod .. " + G", function() hl.exec_cmd("hyprctl dispatch togglegroup") end)
+hl.bind(mainMod .. " + P", function()
+	hl.exec_cmd("hyprctl dispatch pseudo")
+end)
+hl.bind(mainMod .. " + G", function()
+	hl.exec_cmd("hyprctl dispatch togglegroup")
+end)
 hl.bind(mainMod .. " + Tab", function()
-    if hl.plugin and hl.plugin.scrolloverview then
-        hl.plugin.scrolloverview.overview("toggle")
-    end
+	if hl.plugin and hl.plugin.scrolloverview then
+		hl.plugin.scrolloverview.overview("toggle")
+	end
 end)
 
 hl.bind("Print", hl.dsp.exec_cmd("zen0x-capture-screenshot smart"))
-hl.bind(mainMod .. " + mouse_down", function() hl.exec_cmd("hyprctl dispatch workspace e+1") end)
-hl.bind(mainMod .. " + mouse_up", function() hl.exec_cmd("hyprctl dispatch workspace e-1") end)
+hl.bind(mainMod .. " + mouse_down", function()
+	hl.exec_cmd("hyprctl dispatch workspace e+1")
+end)
+hl.bind(mainMod .. " + mouse_up", function()
+	hl.exec_cmd("hyprctl dispatch workspace e-1")
+end)
 
 hl.bind("SUPER + mouse:272", hl.dsp.window.drag())
 hl.bind("SUPER + mouse:273", hl.dsp.window.resize())
