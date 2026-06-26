@@ -14,7 +14,8 @@ hl.bind(mainMod .. " + SHIFT + F", function()
 end)
 
 hl.bind(mainMod .. "+Space", hl.dsp.exec_cmd(ipc .. " panel-toggle launcher"))
-hl.bind(mainMod .. "+C", hl.dsp.exec_cmd(ipc .. " panel-toggle control-center"))
+hl.bind(mainMod .. "+ SHIFT + C", hl.dsp.exec_cmd(ipc .. " panel-toggle control-center"))
+hl.bind(mainMod .. "+ SHIFT + W", hl.dsp.exec_cmd(ipc .. " panel-toggle wallpaper"))
 hl.bind(mainMod .. "+comma", hl.dsp.exec_cmd(ipc .. " settings-toggle"))
 hl.bind("SUPER + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind("SUPER + SHIFT + C", hl.dsp.exec_cmd("code"))
@@ -40,8 +41,12 @@ for i = 1, 10 do
     hl.bind(mainMod .. " + SHIFT + " .. key,     hl.dsp.window.move({ workspace = i }))
 end
 
-hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("scratchpad"))
-hl.bind(mainMod .. " + ALT + S", hl.dsp.window.move({ workspace = "special:scratchpad", follow = false }))
+for i = 1, 5 do
+    local scratchpad = "scratchpad" .. i
+    hl.bind(mainMod .. " + ALT + " .. i, hl.dsp.workspace.toggle_special(scratchpad))
+    hl.bind(mainMod .. " + ALT + SHIFT + " .. i, hl.dsp.window.move({ workspace = "special:" .. scratchpad, follow = false }))
+end
+
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("zen0x-capture-screenshot region"))
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("zen0x-capture-ocr"))
 hl.bind(mainMod .. " + ALT + M", hl.dsp.exec_cmd("zen0x-audio-output-switch"))

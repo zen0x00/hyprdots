@@ -211,13 +211,10 @@ extract() {
 }
 
 # >>> Codex installer >>>
-export PATH="/home/zen0x/.local/bin:$PATH"
+export PATH="/home/aman/.local/bin:$PATH"
+export PATH="/home/aman/.cargo/bin:$PATH"
 # <<< Codex installer <<<
+. "$HOME/.cargo/env"
 
 export PATH=$PATH:/home/aman/.spicetify
 export PATH=$PATH:~/.spicetify
-export PATH=$PATH:~/.spicetify
-export ANDROID_HOME=/opt/android-sdk
-export ANDROID_SDK_ROOT=/opt/android-sdk
-export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator
-export PATH=$PATH:/opt/android-sdk/cmdline-tools/latest/bin

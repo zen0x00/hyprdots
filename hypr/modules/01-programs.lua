@@ -1,6 +1,7 @@
 return {
     terminal = "kitty",
     file_manager = "nautilus",
-    browser = "zen-browser",
+    browser = "brave-origin",
     menu = "noctalia msg panel-toggle launcher",
+    cc = "noctalia msg panel-toggle control-center"
 }

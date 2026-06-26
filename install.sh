@@ -31,14 +31,13 @@ PACMAN_PACKAGES=(
     zsh fzf zoxide starship eza fastfetch
 
     # Wayland / WM
-    hyprland uwsm hypridle hyprlock hyprpaper hyprpolkitagent hyprcursor
-    greetd dbus
+    hyprland uwsm
 
     # Launcher & terminal
     kitty
 
     # File manager
-    thunar
+    nautilus
 
     # Clipboard
     wl-clipboard cliphist
@@ -53,8 +52,11 @@ PACMAN_PACKAGES=(
     easyeffects lsp-plugins-lv2 calf zam-plugins mda.lv2
     brightnessctl
 
+    # Virtualization
+    qemu-full libvirt virt-manager dnsmasq edk2-ovmf swtpm vde2 openbsd-netcat
+
     # Portals
-    xdg-desktop-portal xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
+    xdg-desktop-portal xdg-desktop-portal-hyprland
 
     # Fonts
     ttf-nerd-fonts-symbols
@@ -63,8 +65,8 @@ PACMAN_PACKAGES=(
 )
 
 AUR_PACKAGES=(
+    bridge-utils
     noctalia-git
-    noctalia-greeter-git
 )
 
 step "AUR helper"
@@ -86,6 +88,34 @@ success "pacman packages done"
 step "AUR packages"
 yay -S --needed --noconfirm "${AUR_PACKAGES[@]}"
 success "AUR packages done"
+
+# ── virtualization ────────────────────────────────────────────────────────────
+step "Virtualization"
+sudo systemctl enable --now libvirtd.service
+success "libvirtd enabled"
+
+for group in libvirt kvm; do
+    if getent group "$group" >/dev/null 2>&1; then
+        if id -nG "$USER" | grep -qw "$group"; then
+            success "$USER already in $group"
+        else
+            sudo usermod -aG "$group" "$USER"
+            success "Added $USER to $group"
+        fi
+    else
+        warn "Group $group not found; skipping"
+    fi
+done
+
+if command -v virsh >/dev/null 2>&1; then
+    if sudo virsh net-info default >/dev/null 2>&1; then
+        sudo virsh net-autostart default >/dev/null 2>&1 || warn "Could not autostart default libvirt network"
+        sudo virsh net-start default >/dev/null 2>&1 || true
+        success "Default libvirt network ready"
+    else
+        warn "Default libvirt network unavailable; check libvirt network templates"
+    fi
+fi
 
 # ── dotfiles ───────────────────────────────────────────────────────────────────
 step "Dotfiles"
@@ -137,21 +167,6 @@ else
     chsh -s "$ZSH_BIN"
     success "Default shell → zsh (takes effect next login)"
 fi
-
-# ── services ───────────────────────────────────────────────────────────────────
-step "Services"
-
-info "Preparing greetd greeter user..."
-sudo useradd -r -s /usr/bin/nologin -d /var/lib/noctalia-greeter greeter 2>/dev/null || true
-
-info "Disabling ly, enabling greetd..."
-sudo systemctl disable ly.service ly@tty2.service 2>/dev/null || true
-sudo systemctl enable greetd.service
-success "greetd enabled with noctalia-greeter"
-
-info "Enabling hyprpolkitagent (user)..."
-systemctl --user enable hyprpolkitagent
-success "hyprpolkitagent enabled"
 
 # ── uwsm / session ─────────────────────────────────────────────────────────────
 step "Hyprland session"
