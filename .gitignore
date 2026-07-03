@@ -1,2 +1,3 @@
 zsh/.zcompdump
-hypr/modules/00-monitors.lua
+.agents/
+.vscode/

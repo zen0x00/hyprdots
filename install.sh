@@ -28,7 +28,7 @@ PACMAN_PACKAGES=(
     gcc cmake cpio pkgconf
 
     # Shell
-    zsh fzf zoxide starship eza fastfetch
+    btop zsh fzf zoxide starship eza fastfetch
 
     # Wayland / WM
     hyprland uwsm
@@ -53,7 +53,7 @@ PACMAN_PACKAGES=(
     qemu-full libvirt virt-manager dnsmasq edk2-ovmf swtpm vde2 openbsd-netcat
 
     # Portals
-    xdg-desktop-portal xdg-desktop-portal-hyprland
+    xdg-desktop-portal-hyprland
 
     # Fonts
     ttf-nerd-fonts-symbols
@@ -61,9 +61,9 @@ PACMAN_PACKAGES=(
     noto-fonts noto-fonts-emoji
 )
 
+
 AUR_PACKAGES=(
-    freedownloadmanager
-    bridge-utils
+    ly
     noctalia-git
 )
 

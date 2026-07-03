@@ -1,4 +1,4 @@
-[[ -o interactive ]] && pfetch
+[[ -o interactive ]] && fastfetch
 
 # ------------------------------------------------------------
 # Zsh: fast, fuzzy, and a little bit pretty.
@@ -210,11 +210,7 @@ extract() {
   esac
 }
 
-# >>> Codex installer >>>
 export PATH="/home/aman/.local/bin:$PATH"
 export PATH="/home/aman/.cargo/bin:$PATH"
-# <<< Codex installer <<<
-. "$HOME/.cargo/env"
-
 export PATH=$PATH:/home/aman/.spicetify
 export PATH=$PATH:~/.spicetify

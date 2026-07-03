@@ -5,9 +5,9 @@ hl.config({
         gaps_workspaces = 10,
         border_size = 1,
         col = {
-	    active_border =  "rgba(595959aa)",
+            active_border = "rgba(595959aa)",
             inactive_border = "rgba(595959aa)",
-	},
+        },
         resize_on_border = true,
         allow_tearing = false,
         layout = "dwindle",
@@ -70,4 +70,10 @@ hl.animation({ leaf = "layersOut", enabled = true, speed = 1.5, bezier = "linear
 hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 1.79, bezier = "almostLinear" })
 hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "almostLinear" })
 hl.animation({ leaf = "workspaces", enabled = false })
-hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 3, bezier = "easeOutQuint", style = "slidevert" })
+hl.animation({
+    leaf = "specialWorkspace",
+    enabled = true,
+    speed = 3,
+    bezier = "easeOutQuint",
+    style = "slidevert",
+})
